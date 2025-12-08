@@ -1,6 +1,4 @@
-@extends('layouts.app')
-
-@section('content')
+<x-app-layout>
 <div class="min-h-screen bg-gray-50 py-8">
     <div class="container mx-auto px-4">
         <!-- Header -->
@@ -8,7 +6,12 @@
             <div class="flex items-center text-sm text-gray-600 mb-4">
                 <a href="{{ route('dashboard') }}" class="hover:text-blue-600">Dashboard</a>
                 <i class="fas fa-chevron-right mx-2 text-xs"></i>
-                <span class="text-gray-800 font-medium">Buat Kegiatan Baru</span>
+            <x-slot name="header">
+                <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                    Buat Kegiatan Baru
+                </h2>
+            </x-slot>
+
             </div>
             <h1 class="text-3xl font-bold text-gray-800">Buat Kegiatan Baru</h1>
             <p class="text-gray-600 mt-2">Isi informasi lengkap tentang kegiatan yang akan Anda selenggarakan</p>
@@ -390,4 +393,4 @@
         </form>
     </div>
 </div>
-@endsection
+</x-app-layout>

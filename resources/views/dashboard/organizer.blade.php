@@ -1,21 +1,14 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl">Organizer Dashboard</h2>
-    </x-slot>
-
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     
     <!-- Header -->
     <div class="mb-8 flex items-center justify-between">
         <div>
-            <h1 class="text-3xl font-bold text-gray-900">Organizer Dashboard</h1>
+            <h1 class="text-3xl font-bold text-gray-900">Organizer Dashboard ImpactHUB</h1>
             <p class="text-gray-600 mt-2">Kelola event dan pantau performa Anda 📊</p>
         </div>
-        <a href="{{ route('events.create') }}" class="inline-flex items-center px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg transition shadow-lg hover:shadow-xl">
-            <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-            </svg>
-            Buat Event Baru
+        <a href="{{ route('events.create') }}" class="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-6 rounded-lg font-semibold hover:shadow-lg transition">
+            + Buat Event Baru
         </a>
     </div>
 
@@ -190,7 +183,7 @@
                     </svg>
                     <h3 class="mt-4 text-lg font-medium text-gray-900">No events yet</h3>
                     <p class="mt-2 text-gray-600">Get started by creating your first event.</p>
-                    <a href="{{ route('events.create') }}" class="mt-4 inline-flex items-center px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg transition">
+                    <a href="{{ route('events.create-event') }}" class="mt-4 inline-flex items-center px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg transition">
                         <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                         </svg>

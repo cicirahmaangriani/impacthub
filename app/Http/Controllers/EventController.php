@@ -50,13 +50,12 @@ class EventController extends Controller
      */
     public function create()
     {
-        $this->authorize('create', Event::class);
+    $categories = Category::active()->get();
+    $eventTypes = EventType::all();
 
-        $categories = Category::active()->get();
-        $eventTypes = EventType::all();
-
-        return view('events.create', compact('categories', 'eventTypes'));
+    return view('events.create', compact('categories', 'eventTypes'));
     }
+
 
     /**
      * Store a newly created event
@@ -66,26 +65,33 @@ class EventController extends Controller
         $this->authorize('create', Event::class);
 
         $validated = $request->validate([
-            'category_id' => 'required|exists:categories,id',
-            'event_type_id' => 'required|exists:event_types,id',
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'objectives' => 'nullable|string',
-            'requirements' => 'nullable|string',
-            'price' => 'required|numeric|min:0',
-            'quota' => 'required|integer|min:1',
-            'location' => 'nullable|string',
-            'venue_type' => 'required|in:online,offline,hybrid',
-            'start_date' => 'required|date|after:now',
-            'end_date' => 'required|date|after:start_date',
-            'registration_deadline' => 'required|date|before:start_date',
-            'instructor_info' => 'nullable|string',
-            'certificate_available' => 'boolean',
-            'points_reward' => 'nullable|integer|min:0',
-            'image' => 'nullable|image|max:2048',
+        'title' => 'required|string|max:255',
+        'category' => 'required|string',
+        'sub_category' => 'nullable|string',
+        'description' => 'required|string',
+        'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+        'event_type' => 'required|in:offline,online',
+        'start_date' => 'required|date',
+        'start_time' => 'required',
+        'end_date' => 'required|date|after_or_equal:start_date',
+        'end_time' => 'required',
+        'location' => 'required|string',
+        'address' => 'nullable|string',
+        'meeting_link' => 'nullable|url',
+        'max_participants' => 'required|integer|min:1',
+        'registration_fee' => 'required|numeric|min:0',
+        'registration_deadline' => 'required|date',
+        'has_certificate' => 'nullable|boolean',
+        'requirements' => 'nullable|string',
+        'instructor' => 'nullable|string',
+        'contact_person' => 'required|string',
+        'contact_phone' => 'required|string',
         ]);
 
         $validated['user_id'] = auth()->id();
+    $validated['status'] = 'published'; // atau 'draft'
+    $validated['slug'] = \Str::slug($validated['title']) . '-' . \Str::random(6);
+    $validated['has_certificate'] = $request->has('has_certificate') ? 1 : 0;
 
         // Handle image upload
         if ($request->hasFile('image')) {
