@@ -6,32 +6,31 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Event extends Model
-{
-    use HasFactory, SoftDeletes;
+    class Event extends Model
+    {
+        use HasFactory, SoftDeletes;
 
-    protected $fillable = [
-    'user_id',
-    'category_id',
-    'event_type_id',
-    'title',
-    'slug',
-    'description',
-    'requirements',
-    'location',
-    'meeting_link',
-    'venue_type',
-    'price',
-    'quota',
-    'start_date',
-    'end_date',
-    'registration_deadline',
-    'certificate_available',
-    'instructor_info',
-    'image',
-    'status',
-];
-
+        protected $fillable = [
+        'user_id',
+        'category_id',
+        'event_type_id',
+        'title',
+        'slug',
+        'description',
+        'requirements',
+        'location',
+        'meeting_link',
+        'venue_type',
+        'price',
+        'quota',
+        'start_date',
+        'end_date',
+        'registration_deadline',
+        'certificate_available',
+        'instructor_info',
+        'image',
+        'status',
+    ];
 
     protected $casts = [
         'price' => 'decimal:2',

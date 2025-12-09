@@ -142,12 +142,16 @@
                 </span>
             @endif
 
-            <!-- CTA Button -->
-            <a href="{{ route('events.show', $event->slug) }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-lg hover:bg-indigo-700 transition">
+            @can('update', $event)
+                <a href="{{ route('events.edit', $event) }}"
+                class="inline-flex items-center px-3 py-1.5 bg-yellow-500 text-white text-xs font-semibold rounded-lg hover:bg-yellow-600 transition">
+                    ✏️ Edit
+                </a>
+            @endcan
+
+            <a href="{{ route('events.show', $event->slug) }}" 
+            class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-lg hover:bg-indigo-700 transition">
                 Lihat Detail
-                <svg class="ml-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
             </a>
         </div>
     </div>

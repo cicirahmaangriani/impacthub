@@ -170,7 +170,7 @@
                             <a href="{{ route('events.show', $event->slug) }}" class="flex-1 text-center px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium rounded-lg transition">
                                 View
                             </a>
-                            <a href="{{ route('events.edit', $event->id) }}" class="flex-1 text-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition">
+                            <a href="{{ route('events.edit', $event->slug) }}" class="flex-1 text-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition">
                                 Edit
                             </a>
                         </div>

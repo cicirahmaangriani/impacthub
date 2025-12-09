@@ -8,56 +8,40 @@ use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\CertificateController;
 
-/*
-|--------------------------------------------------------------------------
-| Public Routes
-|--------------------------------------------------------------------------
-*/
+// =========================
+// PUBLIC ROUTES
+// =========================
 
 Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-// // Public Event Listing & Detail
-// Route::get('/events', [EventController::class, 'index'])->name('events.index');
-// Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');
+Route::get('/events', [EventController::class, 'index'])->name('events.index');
 
-// // Test route - taruh di paling atas setelah use statements
-// Route::get('/test-event-create', function() {
-//     return 'Route berfungsi!';
-// });
-
-/*
-|--------------------------------------------------------------------------
-| Auth Protected Routes
-|--------------------------------------------------------------------------
-*/
+// =========================
+// AUTH ROUTES (ONLY WHEN LOGGED IN)
+// =========================
 
 Route::middleware(['auth'])->group(function () {
 
-    // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('dashboard');
 
-    // Event Management (Organizer Only)
-    Route::middleware(['auth'])->group(function () {
-        Route::resource('events', EventController::class);
-        Route::get('/events/{event}/edit', [EventController::class, 'edit'])->name('events.edit');
-        Route::put('/events/{event}', [EventController::class, 'update'])->name('events.update');
-        Route::delete('/events/{event}', [EventController::class, 'destroy'])->name('events.destroy');
-    });
+    // PRIVATE CRUD (create, store, edit, update, delete)
+    Route::resource('events', EventController::class)->except(['index', 'show']);
 
-    // Registration
+    // Registrations
     Route::post('/events/{event}/register', [RegistrationController::class, 'store'])
         ->name('events.register');
+
     Route::get('/registrations', [RegistrationController::class, 'index'])
         ->name('registrations.index');
 
-    // Transactions (for paid events)
+    // Payments
     Route::post('/events/{event}/pay', [TransactionController::class, 'store'])
         ->name('events.pay');
 
-    // Certificate Download
+    // Certificates
     Route::get('/certificate/{registration}', [CertificateController::class, 'show'])
         ->name('certificate.show');
 
@@ -67,9 +51,9 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-/*
-|--------------------------------------------------------------------------
-| Auth Routes (Laravel Breeze)
-|--------------------------------------------------------------------------
-*/
+// =========================
+// PUBLIC EVENT DETAIL — SLUG
+// =========================
+Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');
+
 require __DIR__.'/auth.php';
