@@ -1,223 +1,183 @@
 <?php
 
-// app/Http/Controllers/EventController.php
 namespace App\Http\Controllers;
 
 use App\Models\Event;
 use App\Models\Category;
 use App\Models\EventType;
-use App\Services\EventService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class EventController extends Controller
 {
-    protected $eventService;
-
-    public function __construct(EventService $eventService)
+    public function __construct()
     {
-        $this->eventService = $eventService;
         $this->middleware('auth')->except(['index', 'show']);
     }
 
-    /**
-     * Display a listing of events
-     */
-    public function index(Request $request)
+    /*
+    |--------------------------------------------------------------------------
+    | LIST EVENTS (Published Only)
+    |--------------------------------------------------------------------------
+    */
+    public function index()
     {
-        $filters = $request->only([
-            'category_id',
-            'event_type_id',
-            'price_min',
-            'price_max',
-            'venue_type',
-            'search',
-            'featured',
-            'status',
-            'sort_by',
-            'sort_order',
-            'per_page'
-        ]);
-
-        $events = $this->eventService->getPublishedEvents($filters);
-        $categories = Category::active()->get();
-        $eventTypes = EventType::all();
-
-        return view('events.index', compact('events', 'categories', 'eventTypes'));
+        $events = Event::published()->latest()->paginate(12);
+        return view('events.index', compact('events'));
     }
 
-    /**
-     * Show the form for creating a new event
-     */
+    /*
+    |--------------------------------------------------------------------------
+    | CREATE PAGE
+    |--------------------------------------------------------------------------
+    */
     public function create()
-    {
-    $categories = Category::active()->get();
+{
+    $categories = Category::all();
     $eventTypes = EventType::all();
 
     return view('events.create', compact('categories', 'eventTypes'));
-    }
+}
 
-
-    /**
-     * Store a newly created event
-     */
-    public function store(Request $request)
-    {
-        $this->authorize('create', Event::class);
-
-        $validated = $request->validate([
+    /*
+    |--------------------------------------------------------------------------
+    | STORE EVENT (Published / Draft)
+    |--------------------------------------------------------------------------
+    */
+   public function store(Request $request)
+{
+    $validated = $request->validate([
         'title' => 'required|string|max:255',
-        'category' => 'required|string',
-        'sub_category' => 'nullable|string',
+        'category_id' => 'required|exists:categories,id',
+        'event_type_id' => 'required|exists:event_types,id',
+        'venue_type' => 'required|in:online,offline,hybrid',
         'description' => 'required|string',
-        'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-        'event_type' => 'required|in:offline,online',
-        'start_date' => 'required|date',
-        'start_time' => 'required',
-        'end_date' => 'required|date|after_or_equal:start_date',
-        'end_time' => 'required',
-        'location' => 'required|string',
-        'address' => 'nullable|string',
-        'meeting_link' => 'nullable|url',
-        'max_participants' => 'required|integer|min:1',
-        'registration_fee' => 'required|numeric|min:0',
-        'registration_deadline' => 'required|date',
-        'has_certificate' => 'nullable|boolean',
         'requirements' => 'nullable|string',
-        'instructor' => 'nullable|string',
-        'contact_person' => 'required|string',
-        'contact_phone' => 'required|string',
-        ]);
+        'instructor_info' => 'nullable|string',
+        'price' => 'required|numeric|min:0',
+        'quota' => 'required|integer|min:1',
+        'location' => 'required|string',
+        'meeting_link' => 'nullable|url',
+        'start_date' => 'required|date',
+        'end_date' => 'required|date|after_or_equal:start_date',
+        'registration_deadline' => 'required|date',
+        'certificate_available' => 'nullable|boolean',
+        'image' => 'required|image|mimes:jpg,png,jpeg|max:2048',
+    ]);
 
-        $validated['user_id'] = auth()->id();
-    $validated['status'] = 'published'; // atau 'draft'
-    $validated['slug'] = \Str::slug($validated['title']) . '-' . \Str::random(6);
-    $validated['has_certificate'] = $request->has('has_certificate') ? 1 : 0;
-
-        // Handle image upload
-        if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')->store('events', 'public');
-        }
-
-        $event = $this->eventService->createEvent($validated);
-
-        return redirect()->route('events.show', $event)
-            ->with('success', 'Event created successfully!');
+    // Jika category_id tetap NULL → hentikan
+    if (!$request->category_id) {
+        return back()
+            ->withErrors(['category_id' => 'Kategori wajib dipilih'])
+            ->withInput();
     }
 
-    /**
-     * Display the specified event
-     */
+    // Tambahan field
+    $validated['user_id'] = auth()->id();
+    $validated['slug'] = Str::slug($validated['title']) . '-' . Str::random(5);
+    $validated['certificate_available'] = $request->has('certificate_available');
+    $validated['status'] = $request->status === 'published' ? 'published' : 'draft';
+
+    // Upload image
+    if ($request->hasFile('image')) {
+        $validated['image'] = $request->file('image')->store('events', 'public');
+    }
+
+    Event::create($validated);
+
+    return redirect()->route('dashboard')
+        ->with('success', "Event berhasil disimpan sebagai {$validated['status']}!");
+}
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | SHOW DETAIL EVENT
+    |--------------------------------------------------------------------------
+    */
     public function show(Event $event)
     {
-        $event->load(['user', 'category', 'eventType', 'schedules']);
-        
-        $relatedEvents = Event::published()
-            ->where('category_id', $event->category_id)
-            ->where('id', '!=', $event->id)
-            ->limit(4)
-            ->get();
-
-        return view('events.show', compact('event', 'relatedEvents'));
+        return view('events.show', compact('event'));
     }
 
-    /**
-     * Show the form for editing the specified event
-     */
+    /*
+    |--------------------------------------------------------------------------
+    | EDIT EVENT PAGE
+    |--------------------------------------------------------------------------
+    */
     public function edit(Event $event)
     {
         $this->authorize('update', $event);
 
-        $categories = Category::active()->get();
-        $eventTypes = EventType::all();
+        $categories = Category::all();
+        $eventTypes  = EventType::all();
 
         return view('events.edit', compact('event', 'categories', 'eventTypes'));
     }
 
-    /**
-     * Update the specified event
-     */
+    /*
+    |--------------------------------------------------------------------------
+    | UPDATE EVENT
+    |--------------------------------------------------------------------------
+    */
     public function update(Request $request, Event $event)
     {
         $this->authorize('update', $event);
 
         $validated = $request->validate([
-            'category_id' => 'required|exists:categories,id',
-            'event_type_id' => 'required|exists:event_types,id',
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'objectives' => 'nullable|string',
-            'requirements' => 'nullable|string',
-            'price' => 'required|numeric|min:0',
-            'quota' => 'required|integer|min:1',
-            'location' => 'nullable|string',
-            'venue_type' => 'required|in:online,offline,hybrid',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after:start_date',
-            'registration_deadline' => 'required|date|before:start_date',
-            'instructor_info' => 'nullable|string',
-            'certificate_available' => 'boolean',
-            'points_reward' => 'nullable|integer|min:0',
-            'image' => 'nullable|image|max:2048',
+            'title'                 => 'required|string|max:255',
+            'category_id'           => 'required|exists:categories,id',
+            'event_type_id'         => 'required|exists:event_types,id',
+            'description'           => 'required|string',
+
+            'venue_type'            => 'required|in:online,offline,hybrid',
+            'location'              => 'nullable|string',
+
+            'start_date'            => 'required|date',
+            'end_date'              => 'required|date|after_or_equal:start_date',
+
+            'registration_deadline' => 'required|date',
+
+            'requirements'          => 'nullable|string',
+            'instructor_info'       => 'nullable|string',
+
+            'price'                 => 'nullable|numeric|min:0',
+            'quota'                 => 'required|integer|min:1',
+
+            'contact_person'        => 'required|string',
+            'contact_phone'         => 'required|string',
+
+            'status'                => 'nullable|in:draft,published',
         ]);
 
-        // Handle image upload
+        // Update slug jika judul berubah
+        if ($request->title !== $event->title) {
+            $validated['slug'] = Str::slug($validated['title']) . '-' . Str::random(6);
+        }
+
+        // Image update
         if ($request->hasFile('image')) {
             $validated['image'] = $request->file('image')->store('events', 'public');
         }
 
-        $event = $this->eventService->updateEvent($event, $validated);
+        $event->update($validated);
 
         return redirect()->route('events.show', $event)
-            ->with('success', 'Event updated successfully!');
+            ->with('success', 'Event berhasil diperbarui!');
     }
 
-    /**
-     * Remove the specified event
-     */
+    /*
+    |--------------------------------------------------------------------------
+    | DELETE EVENT
+    |--------------------------------------------------------------------------
+    */
     public function destroy(Event $event)
     {
         $this->authorize('delete', $event);
 
-        try {
-            $this->eventService->deleteEvent($event);
-            return redirect()->route('events.index')
-                ->with('success', 'Event deleted successfully!');
-        } catch (\Exception $e) {
-            return back()->with('error', $e->getMessage());
-        }
-    }
+        $event->delete();
 
-    /**
-     * Publish event
-     */
-    public function publish(Event $event)
-    {
-        $this->authorize('update', $event);
-
-        try {
-            $this->eventService->publishEvent($event);
-            return back()->with('success', 'Event published successfully!');
-        } catch (\Exception $e) {
-            return back()->with('error', $e->getMessage());
-        }
-    }
-
-    /**
-     * Cancel event
-     */
-    public function cancel(Request $request, Event $event)
-    {
-        $this->authorize('update', $event);
-
-        $validated = $request->validate([
-            'cancellation_reason' => 'required|string',
-        ]);
-
-        try {
-            $this->eventService->cancelEvent($event, $validated['cancellation_reason']);
-            return back()->with('success', 'Event cancelled successfully!');
-        } catch (\Exception $e) {
-            return back()->with('error', $e->getMessage());
-        }
+        return redirect()->route('events.index')
+            ->with('success', 'Event berhasil dihapus!');
     }
 }

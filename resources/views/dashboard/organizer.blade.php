@@ -183,7 +183,7 @@
                     </svg>
                     <h3 class="mt-4 text-lg font-medium text-gray-900">No events yet</h3>
                     <p class="mt-2 text-gray-600">Get started by creating your first event.</p>
-                    <a href="{{ route('events.create-event') }}" class="mt-4 inline-flex items-center px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg transition">
+                    <a href="{{ route('events.create') }}" class="mt-4 inline-flex items-center px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg transition">
                         <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                         </svg>
