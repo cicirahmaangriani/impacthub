@@ -97,7 +97,12 @@ class EventController extends Controller
     */
     public function show(Event $event)
     {
-        return view('events.show', compact('event'));
+        $relatedEvents = Event::where('category_id', $event->category_id)
+        ->where('id', '!=', $event->id)
+        ->take(3)
+        ->get();
+
+    return view('events.show', compact('event', 'relatedEvents'));
     }
 
     /*
@@ -154,6 +159,7 @@ class EventController extends Controller
         if ($request->title !== $event->title) {
             $validated['slug'] = Str::slug($validated['title']) . '-' . Str::random(6);
         }
+
 
         // Image update
         if ($request->hasFile('image')) {

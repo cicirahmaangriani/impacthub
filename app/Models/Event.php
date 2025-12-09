@@ -130,4 +130,10 @@ class Event extends Model
     {
         return $this->price == 0;
     }
+
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
+
 }
