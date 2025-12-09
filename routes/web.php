@@ -8,40 +8,54 @@ use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\CertificateController;
 
-// =========================
-// PUBLIC ROUTES
-// =========================
+/*
+|--------------------------------------------------------------------------
+| Public Routes
+|--------------------------------------------------------------------------
+*/
 
 Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-Route::get('/events', [EventController::class, 'index'])->name('events.index');
+// // Public Event Listing & Detail
+// Route::get('/events', [EventController::class, 'index'])->name('events.index');
+// Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');
 
-// =========================
-// AUTH ROUTES (ONLY WHEN LOGGED IN)
-// =========================
+// // Test route - taruh di paling atas setelah use statements
+// Route::get('/test-event-create', function() {
+//     return 'Route berfungsi!';
+// });
+
+/*
+|--------------------------------------------------------------------------
+| Auth Protected Routes
+|--------------------------------------------------------------------------
+*/
 
 Route::middleware(['auth'])->group(function () {
 
+    // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('dashboard');
 
-    // PRIVATE CRUD (create, store, edit, update, delete)
-    Route::resource('events', EventController::class)->except(['index', 'show']);
+    // Event Management (Organizer Only)
+    Route::middleware(['auth'])->group(function () {
+        Route::resource('events', EventController::class);
 
-    // Registrations
+    });
+
+    // Registration
     Route::post('/events/{event}/register', [RegistrationController::class, 'store'])
         ->name('events.register');
-
     Route::get('/registrations', [RegistrationController::class, 'index'])
         ->name('registrations.index');
 
-    // Payments
+    // Transactions (for paid events)
     Route::post('/events/{event}/pay', [TransactionController::class, 'store'])
         ->name('events.pay');
 
-    // Certificates
+    // Certificate Download
     Route::get('/certificate/{registration}', [CertificateController::class, 'show'])
         ->name('certificate.show');
 
@@ -49,11 +63,17 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::get('/events/{event}/hapus', [EventController::class, 'hapus'])
+    ->name('events.hapus')
+    ->middleware('auth');
+
 });
 
-// =========================
-// PUBLIC EVENT DETAIL — SLUG
-// =========================
-Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');
 
+/*
+|--------------------------------------------------------------------------
+| Auth Routes (Laravel Breeze)
+|--------------------------------------------------------------------------
+*/
 require __DIR__.'/auth.php';

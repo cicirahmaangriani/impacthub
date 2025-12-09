@@ -155,12 +155,10 @@ class EventController extends Controller
         'image' => 'nullable|image'
     ]);
 
-    // 🔥 update slug kalau title berubah
     if ($validated['title'] !== $event->title) {
         $validated['slug'] = Str::slug($validated['title']) . '-' . Str::random(6);
     }
 
-    // 🔥 Update status dari tombol
     $validated['status'] = $request->status ?? $event->status;
 
     // Upload image jika ada
@@ -176,18 +174,26 @@ class EventController extends Controller
     /**
      * Remove the specified event
      */
-    public function destroy(Event $event)
+   public function destroy(Event $event)
     {
-        $this->authorize('delete', $event);
+    $this->authorize('delete', $event);
 
-        try {
-            $this->eventService->deleteEvent($event);
-            return redirect()->route('events.index')
-                ->with('success', 'Event deleted successfully!');
-        } catch (\Exception $e) {
-            return back()->with('error', $e->getMessage());
-        }
+    try {
+        $event->delete();
+
+        return redirect()->route('events.index')
+            ->with('success', 'Event berhasil dihapus!');
+    } catch (\Exception $e) {
+        return back()->with('error', $e->getMessage());
     }
+    }
+
+    public function hapus(Event $event)
+    {
+    $this->authorize('delete', $event);
+    return view('events.hapus', compact('event'));
+    }
+
 
     /**
      * Publish event
