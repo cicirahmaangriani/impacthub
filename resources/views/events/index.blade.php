@@ -12,7 +12,7 @@
                     Temukan Peluang <span class="text-yellow-300">Berkembang</span> Bersama Kami
                 </h1>
                 <p class="text-lg md:text-xl text-indigo-100 mb-6">
-                    Ikuti ratusan event, bootcamp, dan kegiatan sosial yang mengembangkan skill dan memperluas jaringan Anda.
+                    Ikuti ratusan event, bootcamp, dan kegiatan sosial yang mengembangkan skill dan memperluas jaringan/ koneksi anda
                 </p>
 
                 <div class="flex flex-wrap gap-4">
