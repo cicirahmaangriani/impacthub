@@ -87,7 +87,7 @@
 
                                 <!-- Banner -->
                                 <div>
-                                    <label class="block text-sm font-semibold mb-1">Banner</label>
+                                    <label class="block text-sm font-semibold mb-1">Poster</label>
                                     <input type="file" name="image" class="w-full p-3 border rounded-lg">
 
                                     @if($event->image)
