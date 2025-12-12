@@ -111,7 +111,7 @@
 
                                 <!-- Image -->
                                 <div>
-                                    <label class="block text-sm font-semibold">Banner *</label>
+                                    <label class="block text-sm font-semibold">Poster *</label>
                                     <input type="file" name="image" required accept="image/*"
                                            class="w-full border rounded-lg p-3">
                                 </div>

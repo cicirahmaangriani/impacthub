@@ -93,15 +93,23 @@
         <div class="flex items-center justify-between mb-6">
             <h2 class="text-xl font-bold text-gray-900">My Events</h2>
             <div class="flex space-x-2">
-                <button class="px-4 py-2 text-sm font-medium text-indigo-600 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition">
+                <a href="{{ route('dashboard') }}"
+                class="px-4 py-2 text-sm font-medium rounded-lg transition
+                {{ empty($filter) ? 'text-indigo-600 bg-indigo-50' : 'text-gray-600 hover:bg-gray-50' }}">
                     All
-                </button>
-                <button class="px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 rounded-lg transition">
+                </a>
+
+                <a href="{{ route('dashboard', ['filter' => 'published']) }}"
+                class="px-4 py-2 text-sm font-medium rounded-lg transition
+                {{ ($filter === 'published') ? 'text-indigo-600 bg-indigo-50' : 'text-gray-600 hover:bg-gray-50' }}">
                     Published
-                </button>
-                <button class="px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 rounded-lg transition">
+                </a>
+
+                <a href="{{ route('dashboard', ['filter' => 'draft']) }}"
+                class="px-4 py-2 text-sm font-medium rounded-lg transition
+                {{ ($filter === 'draft') ? 'text-indigo-600 bg-indigo-50' : 'text-gray-600 hover:bg-gray-50' }}">
                     Draft
-                </button>
+                </a>
             </div>
         </div>
 

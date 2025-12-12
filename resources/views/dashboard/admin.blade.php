@@ -152,7 +152,10 @@
                         <img src="{{ $registration->user->avatar_url }}" class="h-10 w-10 rounded-full" alt="{{ $registration->user->name }}">
                         <div class="flex-1 min-w-0">
                             <p class="text-sm font-semibold text-gray-900">{{ $registration->user->name }}</p>
-                            <p class="text-xs text-gray-500 truncate mt-1">{{ $registration->event->title }}</p>
+                            <p class="text-xs text-gray-500 truncate mt-1">
+                                {{ $registration->event->title ?? 'Event Deleted' }}
+                            </p>
+
                             <div class="flex items-center space-x-2 mt-2">
                                 <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium {{ $registration->status === 'confirmed' ? 'bg-green-100 text-green-800' : ($registration->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800') }}">
                                     {{ ucfirst($registration->status) }}
