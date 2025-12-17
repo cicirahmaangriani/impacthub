@@ -76,6 +76,17 @@ class EventController extends Controller
         'quota' => 'required|integer',
         'price' => 'required|numeric',
         'registration_deadline' => 'required|date',
+        'requirements' => 'nullable|string',
+        'instructor_info' => 'nullable|string',
+        'location' => 'nullable|string',
+        'meeting_link' => 'nullable|string',
+        'start_date' => 'required|date',
+        'end_date' => 'required|date',
+        'quota' => 'required|integer',
+        'price' => 'required|numeric',
+        'objectives' => 'nullable|string',
+        'points_reward' => 'nullable|integer|min:0',
+        'registration_deadline' => 'required|date',
     ]);
     $validated['slug'] = Str::slug($validated['title']) . '-' . Str::random(6);
 

@@ -58,48 +58,48 @@
                                 </div>
 
 
-                                <!-- Event Type ID (online/offline) -->
-                                <div>
-    <label class="block text-sm font-semibold">Tipe Event *</label>
-    <select name="event_type_id" required
-            class="w-full px-4 py-3 border rounded-lg @error('event_type_id') border-red-500 @enderror">
+    <!-- Event Type ID (online/offline) -->
+    <div>
+        <label class="block text-sm font-semibold">Tipe Event *</label>
+        <select name="event_type_id" required
+                class="w-full px-4 py-3 border rounded-lg @error('event_type_id') border-red-500 @enderror">
 
-        <option value="" disabled {{ old('event_type_id') ? '' : 'selected' }}>
-            — Pilih Tipe Event —
-        </option>
-
-        @foreach($eventTypes as $type)
-            <option value="{{ $type->id }}" 
-                {{ old('event_type_id') == $type->id ? 'selected' : '' }}>
-                {{ $type->name }}
+            <option value="" disabled {{ old('event_type_id') ? '' : 'selected' }}>
+                — Pilih Tipe Event —
             </option>
-        @endforeach
-    </select>
 
-    @error('event_type_id')
-        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-    @enderror
-</div>
+            @foreach($eventTypes as $type)
+                <option value="{{ $type->id }}" 
+                    {{ old('event_type_id') == $type->id ? 'selected' : '' }}>
+                    {{ $type->name }}
+                </option>
+            @endforeach
+        </select>
+
+        @error('event_type_id')
+            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+        @enderror
+    </div>
 
 
-                                <!-- Venue Type -->
-                                <div>
-                                    <label class="block text-sm font-semibold">Venue *</label>
-                                    <div class="grid grid-cols-2 gap-4">
-                                        <label class="flex items-center p-3 border rounded-lg cursor-pointer">
-                                            <input type="radio" name="venue_type" value="offline" class="mr-3">
-                                            Offline
-                                        </label>
-                                        <label class="flex items-center p-3 border rounded-lg cursor-pointer">
-                                            <input type="radio" name="venue_type" value="online" class="mr-3">
-                                            Online
-                                        </label>
-                                        <label class="flex items-center p-3 border rounded-lg cursor-pointer">
-                                            <input type="radio" name="venue_type" value="hybrid" class="mr-3">
-                                            Hybrid
-                                        </label>
-                                    </div>
-                                </div>
+    <!-- Venue Type -->
+    <div>
+        <label class="block text-sm font-semibold">Venue *</label>
+            <div class="grid grid-cols-2 gap-4">
+                <label class="flex items-center p-3 border rounded-lg cursor-pointer">
+                    <input type="radio" name="venue_type" value="offline" class="mr-3">
+                        Offline
+                </label>
+                <label class="flex items-center p-3 border rounded-lg cursor-pointer">
+                    <input type="radio" name="venue_type" value="online" class="mr-3">
+                        Online
+                </label>
+                <label class="flex items-center p-3 border rounded-lg cursor-pointer">
+                        <input type="radio" name="venue_type" value="hybrid" class="mr-3">
+                            Hybrid
+                </label>
+            </div>
+   </div>
 
                                 <!-- Description -->
                                 <div>
@@ -115,7 +115,6 @@
                                     <input type="file" name="image" required accept="image/*"
                                            class="w-full border rounded-lg p-3">
                                 </div>
-
                             </div>
                         </div>
 
@@ -160,7 +159,6 @@
                             </h2>
 
                             <div class="space-y-5">
-
                                 <!-- Quota -->
                                 <div>
                                     <label class="text-sm font-semibold">Kuota Peserta *</label>
@@ -183,6 +181,13 @@
                                            class="w-full px-4 py-3 border rounded-lg">
                                 </div>
 
+                                <!-- Point Reward -->
+                                <div>
+                                    <label class="text-sm font-semibold">Point Reward</label>
+                                    <input type="number" name="points_reward" required
+                                           class="w-full px-4 py-3 border rounded-lg">
+                                </div>
+
                                 <!-- Certificate -->
                                 <div class="flex items-center space-x-3">
                                     <input type="checkbox" name="certificate_available" value="1" class="w-5 h-5">
@@ -198,8 +203,13 @@
                                 <i class="fas fa-plus-circle text-orange-600 mr-3"></i> Informasi Tambahan
                             </h2>
 
-                            <div class="space-y-5">
+                             <div>
+                                    <label class="text-sm font-semibold">Tujuan Pembelajaran</label>
+                                    <textarea name="objectives" rows="4"
+                                              class="w-full px-4 py-3 border rounded-lg"></textarea>
+                                </div>
 
+                            <div class="space-y-5">
                                 <div>
                                     <label class="text-sm font-semibold">Persyaratan</label>
                                     <textarea name="requirements" rows="4"
@@ -211,10 +221,8 @@
                                     <input type="text" name="instructor_info"
                                            class="w-full px-4 py-3 border rounded-lg">
                                 </div>
-
                             </div>
                         </div>
-
                     </div>
 
                     <!-- ====================== SIDEBAR ======================= -->

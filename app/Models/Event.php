@@ -28,9 +28,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
         'registration_deadline',
         'certificate_available',
         'instructor_info',
+        'points_reward', 
+        'objectives',
         'image',
         'status',
     ];
+
 
     protected $casts = [
         'price' => 'decimal:2',

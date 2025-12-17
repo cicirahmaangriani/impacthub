@@ -140,6 +140,14 @@
                     <span class="text-red-600 font-semibold">Penuh!</span>
                 @endif
             </p>
+
+            <div class="flex items-center justify-between text-sm mb-1">
+                <span class="text-gray-600">Point Reward</span>
+                <span class="font-semibold text-gray-900">
+                    {{ $event->point_reward }}/{{ $event->quota }}
+                </span>
+            </div>
+             
         </div>
 
 

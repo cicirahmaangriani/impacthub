@@ -165,6 +165,13 @@
                                            class="w-full px-4 py-3 border rounded-lg">
                                 </div>
 
+                                <div>
+                                    <label class="text-sm font-semibold">Point Reward</label>
+                                    <input type="number" name="points_reward"
+                                           value="{{ $event->points_reward }}"
+                                           class="w-full px-4 py-3 border rounded-lg">
+                                </div>
+
                                 <div class="flex items-center gap-2">
                                     <input type="checkbox" name="certificate_available" value="1"
                                            {{ $event->certificate_available ? 'checked' : '' }}>
@@ -179,6 +186,12 @@
                             <h2 class="text-xl font-bold mb-4">Informasi Tambahan</h2>
 
                             <div class="space-y-4">
+
+                                <div>
+                                    <label class="text-sm font-semibold">Tujuan Pembelajaran</label>
+                                    <textarea name="objectives" rows="4"
+                                              class="w-full px-4 py-3 border rounded-lg">{{ $event->objectives }}</textarea>
+                                </div>
 
                                 <div>
                                     <label class="text-sm font-semibold">Persyaratan</label>
