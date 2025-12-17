@@ -17,11 +17,6 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-// (Opsional) Test route
-Route::get('/test-event-create', function () {
-    return 'Route berfungsi!';
-});
-
 // Public Event Listing & Detail (pakai slug)
 Route::get('/events', [EventController::class, 'index'])->name('events.index');
 Route::get('/events/{event:slug}', [EventController::class, 'show'])->name('events.show');
@@ -43,10 +38,6 @@ Route::middleware(['auth'])->group(function () {
     */
     Route::middleware(['can:isAdmin'])->prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'admin'])->name('dashboard');
-
-        // (Kalau sudah ada modulnya nanti)
-        // Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');
-        // Route::get('/reports', [AdminReportController::class, 'index'])->name('reports.index');
     });
 
     /*
@@ -66,7 +57,7 @@ Route::middleware(['auth'])->group(function () {
     |--------------------------------------------------------------------------
     */
     Route::middleware(['can:isOrganizer'])->group(function () {
-        Route::get('/events/create-event', [EventController::class, 'create'])->name('events.create-event');
+        Route::get('/events/create', [EventController::class, 'create'])->name('events.create');
         Route::post('/events', [EventController::class, 'store'])->name('events.store');
 
         Route::get('/events/{event}/edit', [EventController::class, 'edit'])->name('events.edit');
@@ -102,7 +93,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::get('/events/{event}/hapus', [EventController::class, 'hapus'])
+    ->name('events.hapus')
+    ->middleware('auth');
+
 });
+
 
 /*
 |--------------------------------------------------------------------------

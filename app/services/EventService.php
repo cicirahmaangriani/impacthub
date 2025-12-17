@@ -16,22 +16,21 @@ class EventService
         DB::beginTransaction();
 
         try {
-            $data['slug'] = Str::slug($data['title']) . '-' . Str::random(6);
-
-            if ($data['price'] > 0) {
-                $data['platform_fee'] = $data['price'] * 0.10;
+            // Slug sudah dibuat di controller, tidak perlu ulang
+            if (!isset($data['slug'])) {
+                $data['slug'] = Str::slug($data['title']) . '-' . Str::random(6);
             }
 
+            // Gunakan registration_fee
+            if (isset($data['registration_fee']) && $data['registration_fee'] > 0) {
+                $data['platform_fee'] = $data['registration_fee'] * 0.10;
+            }
+
+            // Simpan event
             $event = Event::create($data);
 
-            if (isset($data['schedules']) && is_array($data['schedules'])) {
-                foreach ($data['schedules'] as $schedule) {
-                    $event->schedules()->create($schedule);
-                }
-            }
-
             DB::commit();
-            return $event->load(['schedules', 'category', 'eventType']);
+            return $event;
 
         } catch (\Exception $e) {
             DB::rollBack();

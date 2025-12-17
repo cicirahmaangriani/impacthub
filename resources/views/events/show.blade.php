@@ -1,11 +1,7 @@
-@extends('layouts.app')
-
-@section('title', $event->title)
-
-@section('content')
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-
-    {{-- Breadcrumb --}}
+<x-app-layout>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    
+    <!-- Breadcrumb -->
     <nav class="flex mb-6" aria-label="Breadcrumb">
         <ol class="inline-flex items-center space-x-1 md:space-x-3">
             <li class="inline-flex items-center">
@@ -285,7 +281,7 @@
                                 🚫 Kuota Penuh
                             </button>
                         @else
-                            <form action="{{ route('events.register', $event) }}" method="POST">
+                            <form action="{{ route('events.register', ['event' => $event->slug]) }}" method="POST">
                                 @csrf
                                 <button type="submit" class="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg transition shadow-lg hover:shadow-xl">
                                     🎯 Daftar Sekarang
@@ -310,4 +306,4 @@
 
     </div>
 </div>
-@endsection
+</x-app-layout>

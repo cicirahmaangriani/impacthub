@@ -6,35 +6,34 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Event extends Model
-{
-    use HasFactory, SoftDeletes;
+    class Event extends Model
+    {
+        use HasFactory, SoftDeletes;
 
-    protected $fillable = [
+        protected $fillable = [
         'user_id',
         'category_id',
         'event_type_id',
         'title',
         'slug',
         'description',
-        'objectives',
         'requirements',
+        'location',
+        'meeting_link',
+        'venue_type',
         'price',
         'quota',
-        'registered_count',
-        'location',
-        'venue_type',
-        'image',
-        'gallery',
-        'status',
         'start_date',
         'end_date',
         'registration_deadline',
-        'instructor_info',
-        'is_featured',
         'certificate_available',
-        'points_reward',
+        'instructor_info',
+        'points_reward', 
+        'objectives',
+        'image',
+        'status',
     ];
+
 
     protected $casts = [
         'price' => 'decimal:2',
@@ -133,4 +132,10 @@ class Event extends Model
     {
         return $this->price == 0;
     }
+
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
+
 }

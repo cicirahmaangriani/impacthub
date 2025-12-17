@@ -25,7 +25,6 @@
 
             <!-- Right Side -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">
-
                 @auth
                     <!-- Dashboard shortcut -->
                     <a href="{{ route('dashboard') }}"

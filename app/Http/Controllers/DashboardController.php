@@ -19,20 +19,19 @@ class DashboardController extends Controller
      * Display dashboard based on user role
      * Route: GET /dashboard
      */
-    public function index()
+    public function index(Request $request)
     {
         $user = auth()->user();
 
         if ($user->isAdmin()) {
             return $this->adminDashboard();
+        } elseif ($user->isOrganizer()) {
+            return $this->organizerDashboard($request);
+        } else {
+            return $this->participantDashboard();
         }
-
-        if ($user->isOrganizer()) {
-            return $this->organizerDashboard();
-        }
-
-        return $this->participantDashboard();
     }
+
 
     /**
      * Admin dashboard route handler
@@ -72,43 +71,37 @@ class DashboardController extends Controller
         return view('dashboard.admin', compact('stats', 'recentEvents', 'recentRegistrations'));
     }
 
-    /**
-     * ORGANIZER DASHBOARD
-     */
-    protected function organizerDashboard()
+    protected function organizerDashboard(Request $request)
     {
         $user = auth()->user();
 
-        $publishedCount = method_exists(Event::class, 'scopePublished')
-            ? $user->events()->published()->count()
-            : $user->events()->where('status', 'published')->count();
-
-        $confirmedParticipants = method_exists(Registration::class, 'scopeConfirmed')
-            ? Registration::whereHas('event', fn ($q) => $q->where('user_id', $user->id))->confirmed()->count()
-            : Registration::whereHas('event', fn ($q) => $q->where('user_id', $user->id))
-                ->where('status', 'confirmed')
-                ->count();
-
-        $paidTxQuery = Transaction::whereHas('registration.event', fn ($q) => $q->where('user_id', $user->id));
-        $totalEarnings = method_exists(Transaction::class, 'scopePaid')
-            ? $paidTxQuery->paid()->sum('organizer_amount')
-            : $paidTxQuery->where('status', 'paid')->sum('organizer_amount');
+        $filter = $request->get('filter');
 
         $stats = [
-            'total_events'        => $user->events()->count(),
-            'published_events'    => $publishedCount,
-            'total_participants'  => $confirmedParticipants,
-            'total_earnings'      => $totalEarnings,
+            'total_events' => $user->events()->count(),
+            'published_events' => $user->events()->published()->count(),
+            'total_participants' => Registration::whereHas('event', function ($q) use ($user) {
+                $q->where('user_id', $user->id);
+            })->confirmed()->count(),
+            'total_earnings' => \App\Models\Transaction::whereHas('registration.event', function ($q) use ($user) {
+                $q->where('user_id', $user->id);
+            })->paid()->sum('organizer_amount'),
         ];
 
-        $myEvents = $user->events()
+        $eventsQuery = $user->events()
             ->with(['category', 'eventType'])
             ->withCount('registrations')
-            ->latest()
-            ->limit(6)
-            ->get();
+            ->latest();
 
-        return view('dashboard.organizer', compact('stats', 'myEvents'));
+        if ($filter === 'published') {
+            $eventsQuery->where('status', 'published');
+        } elseif ($filter === 'draft') {
+            $eventsQuery->where('status', 'draft');
+        }
+
+        $myEvents = $eventsQuery->limit(6)->get();
+
+        return view('dashboard.organizer', compact('stats', 'myEvents', 'filter'));
     }
 
     /**
