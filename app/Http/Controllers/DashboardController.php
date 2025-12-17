@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use App\Models\Registration;
+use App\Models\Transaction;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -15,6 +17,7 @@ class DashboardController extends Controller
 
     /**
      * Display dashboard based on user role
+     * Route: GET /dashboard
      */
     public function index()
     {
@@ -22,23 +25,45 @@ class DashboardController extends Controller
 
         if ($user->isAdmin()) {
             return $this->adminDashboard();
-        } elseif ($user->isOrganizer()) {
-            return $this->organizerDashboard();
-        } else {
-            return $this->participantDashboard();
         }
+
+        if ($user->isOrganizer()) {
+            return $this->organizerDashboard();
+        }
+
+        return $this->participantDashboard();
     }
 
+    /**
+     * Admin dashboard route handler
+     * Route: GET /admin/dashboard
+     */
+    public function admin()
+    {
+        // biar konsisten, /admin/dashboard tampilannya sama dengan adminDashboard()
+        return $this->adminDashboard();
+    }
+
+    /**
+     * ADMIN DASHBOARD
+     */
     protected function adminDashboard()
     {
         $stats = [
-            'total_users' => \App\Models\User::count(),
-            'total_events' => Event::count(),
+            'total_users'         => User::count(),
+            'total_events'        => Event::count(),
             'total_registrations' => Registration::count(),
-            'total_revenue' => \App\Models\Transaction::paid()->sum('amount'),
+            // aman: kalau scope paid() belum ada, fallback ke where('status','paid')
+            'total_revenue'       => method_exists(Transaction::class, 'scopePaid')
+                ? Transaction::paid()->sum('amount')
+                : Transaction::where('status', 'paid')->sum('amount'),
         ];
 
-        $recentEvents = Event::with('user')->latest()->limit(5)->get();
+        $recentEvents = Event::with('user')
+            ->latest()
+            ->limit(5)
+            ->get();
+
         $recentRegistrations = Registration::with(['user', 'event'])
             ->latest()
             ->limit(10)
@@ -47,19 +72,33 @@ class DashboardController extends Controller
         return view('dashboard.admin', compact('stats', 'recentEvents', 'recentRegistrations'));
     }
 
+    /**
+     * ORGANIZER DASHBOARD
+     */
     protected function organizerDashboard()
     {
         $user = auth()->user();
 
+        $publishedCount = method_exists(Event::class, 'scopePublished')
+            ? $user->events()->published()->count()
+            : $user->events()->where('status', 'published')->count();
+
+        $confirmedParticipants = method_exists(Registration::class, 'scopeConfirmed')
+            ? Registration::whereHas('event', fn ($q) => $q->where('user_id', $user->id))->confirmed()->count()
+            : Registration::whereHas('event', fn ($q) => $q->where('user_id', $user->id))
+                ->where('status', 'confirmed')
+                ->count();
+
+        $paidTxQuery = Transaction::whereHas('registration.event', fn ($q) => $q->where('user_id', $user->id));
+        $totalEarnings = method_exists(Transaction::class, 'scopePaid')
+            ? $paidTxQuery->paid()->sum('organizer_amount')
+            : $paidTxQuery->where('status', 'paid')->sum('organizer_amount');
+
         $stats = [
-            'total_events' => $user->events()->count(),
-            'published_events' => $user->events()->published()->count(),
-            'total_participants' => Registration::whereHas('event', function ($q) use ($user) {
-                $q->where('user_id', $user->id);
-            })->confirmed()->count(),
-            'total_earnings' => \App\Models\Transaction::whereHas('registration.event', function ($q) use ($user) {
-                $q->where('user_id', $user->id);
-            })->paid()->sum('organizer_amount'),
+            'total_events'        => $user->events()->count(),
+            'published_events'    => $publishedCount,
+            'total_participants'  => $confirmedParticipants,
+            'total_earnings'      => $totalEarnings,
         ];
 
         $myEvents = $user->events()
@@ -72,15 +111,22 @@ class DashboardController extends Controller
         return view('dashboard.organizer', compact('stats', 'myEvents'));
     }
 
+    /**
+     * PARTICIPANT DASHBOARD
+     */
     protected function participantDashboard()
     {
         $user = auth()->user();
 
+        $confirmedRegsCount = method_exists(Registration::class, 'scopeConfirmed')
+            ? $user->registrations()->confirmed()->count()
+            : $user->registrations()->where('status', 'confirmed')->count();
+
         $stats = [
-            'total_registrations' => $user->registrations()->count(),
-            'confirmed_registrations' => $user->registrations()->confirmed()->count(),
-            'total_certificates' => $user->certificates()->count(),
-            'total_points' => $user->total_points,
+            'total_registrations'      => $user->registrations()->count(),
+            'confirmed_registrations'  => $confirmedRegsCount,
+            'total_certificates'       => $user->certificates()->count(),
+            'total_points'             => (int) ($user->total_points ?? 0),
         ];
 
         $myRegistrations = $user->registrations()
@@ -89,17 +135,20 @@ class DashboardController extends Controller
             ->limit(6)
             ->get();
 
-        $recommendedEvents = Event::published()
-            ->availableForRegistration()
-            ->where('category_id', function ($query) use ($user) {
-                $query->select('category_id')
-                    ->from('events')
-                    ->join('registrations', 'events.id', '=', 'registrations.event_id')
-                    ->where('registrations.user_id', $user->id)
-                    ->groupBy('category_id')
-                    ->orderByRaw('COUNT(*) DESC')
-                    ->limit(1);
-            })
+        // Recommended events: pakai scope kalau ada, fallback kalau tidak ada
+        $eventsQuery = Event::query();
+
+        if (method_exists(Event::class, 'scopePublished')) {
+            $eventsQuery->published();
+        } else {
+            $eventsQuery->where('status', 'published');
+        }
+
+        if (method_exists(Event::class, 'scopeAvailableForRegistration')) {
+            $eventsQuery->availableForRegistration();
+        }
+
+        $recommendedEvents = $eventsQuery
             ->limit(4)
             ->get();
 
