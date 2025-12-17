@@ -8,6 +8,8 @@ use App\Models\Category;
 use App\Models\EventType;
 use App\Services\EventService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+
 
 class EventController extends Controller
 {
@@ -62,41 +64,54 @@ class EventController extends Controller
      * Store a newly created event
      */
     public function store(Request $request)
-    {
-        $this->authorize('create', Event::class);
+{
+    $validated = $request->validate([
+        'title' => 'required|string|max:255',
+        'category_id' => 'required',
+        'event_type_id' => 'required',
+        'venue_type' => 'required',
+        'description' => 'required',
+        'start_date' => 'required|date',
+        'end_date' => 'required|date',
+        'quota' => 'required|integer',
+        'price' => 'required|numeric',
+        'registration_deadline' => 'required|date',
+        'requirements' => 'nullable|string',
+        'instructor_info' => 'nullable|string',
+        'location' => 'nullable|string',
+        'meeting_link' => 'nullable|string',
+        'start_date' => 'required|date',
+        'end_date' => 'required|date',
+        'quota' => 'required|integer',
+        'price' => 'required|numeric',
+        'objectives' => 'nullable|string',
+        'points_reward' => 'nullable|integer|min:0',
+        'registration_deadline' => 'required|date',
+    ]);
+    $validated['slug'] = Str::slug($validated['title']) . '-' . Str::random(6);
 
-        $validated = $request->validate([
-            'category_id' => 'required|exists:categories,id',
-            'event_type_id' => 'required|exists:event_types,id',
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'objectives' => 'nullable|string',
-            'requirements' => 'nullable|string',
-            'price' => 'required|numeric|min:0',
-            'quota' => 'required|integer|min:1',
-            'location' => 'nullable|string',
-            'venue_type' => 'required|in:online,offline,hybrid',
-            'start_date' => 'required|date|after:now',
-            'end_date' => 'required|date|after:start_date',
-            'registration_deadline' => 'required|date|before:start_date',
-            'instructor_info' => 'nullable|string',
-            'certificate_available' => 'boolean',
-            'points_reward' => 'nullable|integer|min:0',
-            'image' => 'nullable|image|max:2048',
-        ]);
+    // Tambahkan user_id otomatis
+    $validated['user_id'] = auth()->id();
 
-        $validated['user_id'] = auth()->id();
+    // Jika checkbox sertifikat tidak dicentang
+    $validated['certificate_available'] = $request->has('certificate_available');
 
-        // Handle image upload
-        if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')->store('events', 'public');
-        }
+    // Tentukan status berdasarkan tombol
+    $validated['status'] = $request->status === 'published'
+        ? 'published'
+        : 'draft';
 
-        $event = $this->eventService->createEvent($validated);
-
-        return redirect()->route('events.show', $event)
-            ->with('success', 'Event created successfully!');
+    // Upload image jika ada
+    if ($request->hasFile('image')) {
+        $validated['image'] = $request->file('image')->store('events', 'public');
     }
+
+    Event::create($validated);
+
+    return redirect()->route('dashboard')
+        ->with('success', 'Event berhasil dibuat!');
+}
+
 
     /**
      * Display the specified event
@@ -107,7 +122,7 @@ class EventController extends Controller
         
         $relatedEvents = Event::published()
             ->where('category_id', $event->category_id)
-            ->where('id', '!=', $event->id)
+            ->where('id', '!=', $event)
             ->limit(4)
             ->get();
 
@@ -131,55 +146,65 @@ class EventController extends Controller
      * Update the specified event
      */
     public function update(Request $request, Event $event)
-    {
-        $this->authorize('update', $event);
+{
+    $validated = $request->validate([
+        'title' => 'required|string',
+        'category_id' => 'required',
+        'event_type_id' => 'required',
+        'venue_type' => 'required',
+        'description' => 'required',
+        'requirements' => 'nullable',
+        'location' => 'nullable|string',
+        'meeting_link' => 'nullable|string',
+        'start_date' => 'required|date',
+        'end_date' => 'required|date',
+        'price' => 'required|numeric',
+        'quota' => 'required|integer',
+        'registration_deadline' => 'required|date',
+        'certificate_available' => 'boolean',
+        'instructor_info' => 'nullable|string',
+        'image' => 'nullable|image'
+    ]);
 
-        $validated = $request->validate([
-            'category_id' => 'required|exists:categories,id',
-            'event_type_id' => 'required|exists:event_types,id',
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'objectives' => 'nullable|string',
-            'requirements' => 'nullable|string',
-            'price' => 'required|numeric|min:0',
-            'quota' => 'required|integer|min:1',
-            'location' => 'nullable|string',
-            'venue_type' => 'required|in:online,offline,hybrid',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after:start_date',
-            'registration_deadline' => 'required|date|before:start_date',
-            'instructor_info' => 'nullable|string',
-            'certificate_available' => 'boolean',
-            'points_reward' => 'nullable|integer|min:0',
-            'image' => 'nullable|image|max:2048',
-        ]);
+    if ($validated['title'] !== $event->title) {
+        $validated['slug'] = Str::slug($validated['title']) . '-' . Str::random(6);
+    }
 
-        // Handle image upload
-        if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')->store('events', 'public');
-        }
+    $validated['status'] = $request->status ?? $event->status;
 
-        $event = $this->eventService->updateEvent($event, $validated);
+    // Upload image jika ada
+    if ($request->hasFile('image')) {
+        $validated['image'] = $request->file('image')->store('events', 'public');
+    }
 
-        return redirect()->route('events.show', $event)
-            ->with('success', 'Event updated successfully!');
+    $event->update($validated);
+
+    return redirect()->route('events.index')->with('success', 'Event berhasil diperbarui!');
     }
 
     /**
      * Remove the specified event
      */
-    public function destroy(Event $event)
+   public function destroy(Event $event)
     {
-        $this->authorize('delete', $event);
+    $this->authorize('delete', $event);
 
-        try {
-            $this->eventService->deleteEvent($event);
-            return redirect()->route('events.index')
-                ->with('success', 'Event deleted successfully!');
-        } catch (\Exception $e) {
-            return back()->with('error', $e->getMessage());
-        }
+    try {
+        $event->delete();
+
+        return redirect()->route('events.index')
+            ->with('success', 'Event berhasil dihapus!');
+    } catch (\Exception $e) {
+        return back()->with('error', $e->getMessage());
     }
+    }
+
+    public function hapus(Event $event)
+    {
+    $this->authorize('delete', $event);
+    return view('events.hapus', compact('event'));
+    }
+
 
     /**
      * Publish event

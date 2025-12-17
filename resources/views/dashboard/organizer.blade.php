@@ -1,21 +1,14 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl">Organizer Dashboard</h2>
-    </x-slot>
-
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     
     <!-- Header -->
     <div class="mb-8 flex items-center justify-between">
         <div>
-            <h1 class="text-3xl font-bold text-gray-900">Organizer Dashboard</h1>
+            <h1 class="text-3xl font-bold text-gray-900">Organizer Dashboard ImpactHUB</h1>
             <p class="text-gray-600 mt-2">Kelola event dan pantau performa Anda 📊</p>
         </div>
-        <a href="{{ route('events.create') }}" class="inline-flex items-center px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg transition shadow-lg hover:shadow-xl">
-            <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-            </svg>
-            Buat Event Baru
+        <a href="{{ route('events.create') }}" class="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-6 rounded-lg font-semibold hover:shadow-lg transition">
+            + Buat Event Baru
         </a>
     </div>
 
@@ -100,15 +93,23 @@
         <div class="flex items-center justify-between mb-6">
             <h2 class="text-xl font-bold text-gray-900">My Events</h2>
             <div class="flex space-x-2">
-                <button class="px-4 py-2 text-sm font-medium text-indigo-600 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition">
+                <a href="{{ route('dashboard') }}"
+                class="px-4 py-2 text-sm font-medium rounded-lg transition
+                {{ empty($filter) ? 'text-indigo-600 bg-indigo-50' : 'text-gray-600 hover:bg-gray-50' }}">
                     All
-                </button>
-                <button class="px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 rounded-lg transition">
+                </a>
+
+                <a href="{{ route('dashboard', ['filter' => 'published']) }}"
+                class="px-4 py-2 text-sm font-medium rounded-lg transition
+                {{ ($filter === 'published') ? 'text-indigo-600 bg-indigo-50' : 'text-gray-600 hover:bg-gray-50' }}">
                     Published
-                </button>
-                <button class="px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 rounded-lg transition">
+                </a>
+
+                <a href="{{ route('dashboard', ['filter' => 'draft']) }}"
+                class="px-4 py-2 text-sm font-medium rounded-lg transition
+                {{ ($filter === 'draft') ? 'text-indigo-600 bg-indigo-50' : 'text-gray-600 hover:bg-gray-50' }}">
                     Draft
-                </button>
+                </a>
             </div>
         </div>
 
@@ -177,8 +178,11 @@
                             <a href="{{ route('events.show', $event->slug) }}" class="flex-1 text-center px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium rounded-lg transition">
                                 View
                             </a>
-                            <a href="{{ route('events.edit', $event->id) }}" class="flex-1 text-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition">
+                            <a href="{{ route('events.edit', $event->slug) }}" class="flex-1 text-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition">
                                 Edit
+                            </a>
+                             <a href="{{ route('events.hapus', $event->slug) }}" class="flex-1 text-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition">
+                                Hapus
                             </a>
                         </div>
                     </div>

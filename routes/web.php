@@ -18,14 +18,21 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-// Public Event Listing & Detail
-Route::get('/events', [EventController::class, 'index'])->name('events.index');
-Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');
+// // Public Event Listing & Detail
+// Route::get('/events', [EventController::class, 'index'])->name('events.index');
+// Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');
 
+<<<<<<< HEAD
 // Test route - taruh di paling atas setelah use statements
 Route::get('/test-event-create', function() {
     return 'Route berfungsi!';
 });
+=======
+// // Test route - taruh di paling atas setelah use statements
+// Route::get('/test-event-create', function() {
+//     return 'Route berfungsi!';
+// });
+>>>>>>> irma
 
 /*
 |--------------------------------------------------------------------------
@@ -40,12 +47,18 @@ Route::middleware(['auth'])->group(function () {
         ->name('dashboard');
 
     // Event Management (Organizer Only)
+<<<<<<< HEAD
     Route::middleware(['can:isOrganizer'])->group(function () {
         Route::get('/events/create-event', [EventController::class, 'create'])->name('events.create-event');
         Route::post('/events', [EventController::class, 'store'])->name('events.store');
         Route::get('/events/{event}/edit', [EventController::class, 'edit'])->name('events.edit');
         Route::put('/events/{event}', [EventController::class, 'update'])->name('events.update');
         Route::delete('/events/{event}', [EventController::class, 'destroy'])->name('events.destroy');
+=======
+    Route::middleware(['auth'])->group(function () {
+        Route::resource('events', EventController::class);
+
+>>>>>>> irma
     });
 
     // Registration
@@ -66,7 +79,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::get('/events/{event}/hapus', [EventController::class, 'hapus'])
+    ->name('events.hapus')
+    ->middleware('auth');
+
 });
+
 
 /*
 |--------------------------------------------------------------------------
