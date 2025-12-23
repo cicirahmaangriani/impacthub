@@ -138,4 +138,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
         return 'slug';
     }
 
+ 
+
 }

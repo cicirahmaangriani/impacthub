@@ -122,26 +122,29 @@ class DashboardController extends Controller
             'total_points'             => (int) ($user->total_points ?? 0),
         ];
 
-        $myRegistrations = $user->registrations()
-            ->with(['event', 'transaction'])
+        $myRegistrations = Registration::where('user_id', $user->id)
+            ->whereHas('event') // ⬅️ BUANG REGISTRATION TANPA EVENT
+            ->with([
+                'event',
+                'event.eventType',
+                'event.category',
+                'transaction',
+            ])
             ->latest()
             ->limit(6)
             ->get();
 
-        // Recommended events: pakai scope kalau ada, fallback kalau tidak ada
-        $eventsQuery = Event::query();
-
-        if (method_exists(Event::class, 'scopePublished')) {
-            $eventsQuery->published();
-        } else {
-            $eventsQuery->where('status', 'published');
-        }
-
-        if (method_exists(Event::class, 'scopeAvailableForRegistration')) {
-            $eventsQuery->availableForRegistration();
-        }
-
-        $recommendedEvents = $eventsQuery
+        $recommendedEvents = Event::published()
+            ->availableForRegistration()
+            ->where('category_id', function ($query) use ($user) {
+                $query->select('category_id')
+                    ->from('events')
+                    ->join('registrations', 'events.id', '=', 'registrations.event_id')
+                    ->where('registrations.user_id', $user->id)
+                    ->groupBy('category_id')
+                    ->orderByRaw('COUNT(*) DESC')
+                    ->limit(1);
+            })
             ->limit(4)
             ->get();
 
