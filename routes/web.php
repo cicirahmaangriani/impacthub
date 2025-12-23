@@ -17,9 +17,8 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-// Public Event Listing & Detail (pakai slug)
+// Public Event Listing (detail route dipindah ke bawah)
 Route::get('/events', [EventController::class, 'index'])->name('events.index');
-Route::get('/events/{event:slug}', [EventController::class, 'show'])->name('events.show');
 
 /*
 |--------------------------------------------------------------------------
@@ -99,6 +98,10 @@ Route::middleware(['auth'])->group(function () {
     ->middleware('auth');
 
 });
+
+// ⬇️ Route ini harus di BAWAH semua route /events/create, /events/{id}/edit, dll
+// agar Laravel tidak menganggap "create" sebagai slug
+Route::get('/events/{event:slug}', [EventController::class, 'show'])->name('events.show');
 
 
 /*
