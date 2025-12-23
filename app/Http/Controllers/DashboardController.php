@@ -93,11 +93,18 @@ class DashboardController extends Controller
             'total_points' => $user->total_points,
         ];
 
-        $myRegistrations = $user->registrations()
-            ->with(['event', 'transaction'])
+        $myRegistrations = Registration::where('user_id', $user->id)
+            ->whereHas('event') // ⬅️ BUANG REGISTRATION TANPA EVENT
+            ->with([
+                'event',
+                'event.eventType',
+                'event.category',
+                'transaction',
+            ])
             ->latest()
             ->limit(6)
             ->get();
+
 
         $recommendedEvents = Event::published()
             ->availableForRegistration()

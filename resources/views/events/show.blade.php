@@ -113,7 +113,7 @@
             <!-- Objectives -->
             @if($event->objectives)
                 <div class="bg-white rounded-2xl shadow-sm p-6 mb-6">
-                    <h2 class="text-xl font-bold text-gray-900 mb-4">🎯 Tujuan Pembelajaran</h2>
+                    <h2 class="text-xl font-bold text-gray-900 mb-4">🎯 Tujuan Event</h2>
                     <div class="prose prose-indigo max-w-none text-gray-700">
                         {!! nl2br(e($event->objectives)) !!}
                     </div>

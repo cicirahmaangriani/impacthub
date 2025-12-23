@@ -188,7 +188,7 @@
                             <div class="space-y-4">
 
                                 <div>
-                                    <label class="text-sm font-semibold">Tujuan Pembelajaran</label>
+                                    <label class="text-sm font-semibold">Tujuan Event</label>
                                     <textarea name="objectives" rows="4"
                                               class="w-full px-4 py-3 border rounded-lg">{{ $event->objectives }}</textarea>
                                 </div>
