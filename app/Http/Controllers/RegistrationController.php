@@ -20,16 +20,38 @@ class RegistrationController extends Controller
     /**
      * Display user's registrations
      */
-    public function index(Request $request)
-    {
-        $status = $request->get('status');
-        $registrations = $this->registrationService->getUserRegistrations(
-            auth()->user(),
-            $status
-        );
-
-        return view('registrations.index', compact('registrations'));
+    
+    public function destroy(Registration $registration)
+{
+    // Pastikan milik user sendiri
+    if ($registration->user_id !== auth()->id()) {
+        abort(403);
     }
+
+    try {
+        $registration->delete();
+
+        return back()->with('success', 'Event berhasil dihapus dari My Event.');
+    } catch (\Exception $e) {
+        return back()->with('error', $e->getMessage());
+    }
+}
+    public function index(Request $request)
+{
+    // 1. Ambil data kategori dan tipe event dari database
+    $categories = \App\Models\Category::all();
+    $eventTypes = \App\Models\EventType::all();
+
+    // 2. Query data utama (misal data pendaftaran atau event)
+    $events = \App\Models\Event::query()
+        ->when($request->category_id, function($query, $cid) {
+            return $query->where('category_id', $cid);
+        })
+        ->paginate(9);
+
+    // 3. KIRIM variabel ke view menggunakan compact
+    return view('events.index', compact('events', 'categories', 'eventTypes'));
+}
 
     /**
      * Register for an event
@@ -48,7 +70,7 @@ class RegistrationController extends Controller
             );
 
             if ($event->isFree()) {
-                return redirect()->route('registrations.show', $registration)
+                return redirect()->route('events.show', $registration)
                     ->with('success', 'Registration successful!');
             } else {
                 return redirect()->route('transactions.show', $registration->transaction)
@@ -63,13 +85,24 @@ class RegistrationController extends Controller
      * Display the specified registration
      */
     public function show(Registration $registration)
-    {
-        $this->authorize('view', $registration);
+{
+    $this->authorize('view', $registration);
 
-        $registration->load(['event', 'transaction', 'certificate']);
+    // 1. Load relasi yang diperlukan
+    $registration->load(['event.user', 'event.category', 'event.eventType', 'event.schedules', 'transaction', 'certificate']);
 
-        return view('registrations.show', compact('registration'));
-    }
+    // 2. Definisikan variabel $event dari pendaftaran ini
+    $event = $registration->event;
+
+    // 3. Ambil data event terkait agar baris 301 di Blade tidak error
+    $relatedEvents = \App\Models\Event::where('category_id', $event->category_id)
+        ->where('id', '!=', $event->id)
+        ->limit(3)
+        ->get();
+
+    // 4. Kirim semua variabel ke view
+    return view('events.show', compact('registration', 'event', 'relatedEvents'));
+}
 
     /**
      * Cancel registration
@@ -93,4 +126,5 @@ class RegistrationController extends Controller
             return back()->with('error', $e->getMessage());
         }
     }
+    
 }

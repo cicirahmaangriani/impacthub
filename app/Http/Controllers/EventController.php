@@ -13,6 +13,7 @@ use Illuminate\Support\Str;
 
 class EventController extends Controller
 {
+    
     protected $eventService;
 
     public function __construct(EventService $eventService)
@@ -20,7 +21,7 @@ class EventController extends Controller
         $this->eventService = $eventService;
         $this->middleware('auth')->except(['index', 'show']);
     }
-
+    
     /**
      * Display a listing of events
      */
@@ -238,5 +239,7 @@ class EventController extends Controller
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }
+
     }
+    
 }

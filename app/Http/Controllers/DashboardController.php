@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use App\Models\Registration;
+use App\Models\Category;
+use App\Models\EventType;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -14,21 +16,28 @@ class DashboardController extends Controller
     }
 
     /**
-     * Display dashboard based on user role
+     * Dashboard utama yang membagi role
      */
     public function index(Request $request)
-{
-    $user = auth()->user();
+    {
+        $user = auth()->user();
 
-    if ($user->isAdmin()) {
-        return $this->adminDashboard();
-    } elseif ($user->isOrganizer()) {
-        return $this->organizerDashboard($request); // <-- tambahkan $request
-    } else {
-        return $this->participantDashboard();
+        // Ambil data kategori & tipe untuk filter global di layout dashboard
+        $categories = Category::all();
+        $eventTypes = EventType::all();
+
+        // Simpan data ini ke view share agar tersedia di dashboard manapun
+        view()->share('categories', $categories);
+        view()->share('eventTypes', $eventTypes);
+
+        if ($user->isAdmin()) {
+            return $this->adminDashboard();
+        } elseif ($user->isOrganizer()) {
+            return $this->organizerDashboard($request);
+        } else {
+            return $this->participantDashboard();
+        }
     }
-}
-
 
     protected function adminDashboard()
     {
@@ -49,38 +58,36 @@ class DashboardController extends Controller
     }
 
     protected function organizerDashboard(Request $request)
-{
-    $user = auth()->user();
+    {
+        $user = auth()->user();
+        $filter = $request->get('filter');
 
-    $filter = $request->get('filter');
+        $stats = [
+            'total_events' => $user->events()->count(),
+            'published_events' => $user->events()->published()->count(),
+            'total_participants' => Registration::whereHas('event', function ($q) use ($user) {
+                $q->where('user_id', $user->id);
+            })->confirmed()->count(),
+            'total_earnings' => \App\Models\Transaction::whereHas('registration.event', function ($q) use ($user) {
+                $q->where('user_id', $user->id);
+            })->paid()->sum('organizer_amount'),
+        ];
 
-    $stats = [
-        'total_events' => $user->events()->count(),
-        'published_events' => $user->events()->published()->count(),
-        'total_participants' => Registration::whereHas('event', function ($q) use ($user) {
-            $q->where('user_id', $user->id);
-        })->confirmed()->count(),
-        'total_earnings' => \App\Models\Transaction::whereHas('registration.event', function ($q) use ($user) {
-            $q->where('user_id', $user->id);
-        })->paid()->sum('organizer_amount'),
-    ];
+        $eventsQuery = $user->events()
+            ->with(['category', 'eventType'])
+            ->withCount('registrations')
+            ->latest();
 
-    $eventsQuery = $user->events()
-        ->with(['category', 'eventType'])
-        ->withCount('registrations')
-        ->latest();
+        if ($filter === 'published') {
+            $eventsQuery->where('status', 'published');
+        } elseif ($filter === 'draft') {
+            $eventsQuery->where('status', 'draft');
+        }
 
-    if ($filter === 'published') {
-        $eventsQuery->where('status', 'published');
-    } elseif ($filter === 'draft') {
-        $eventsQuery->where('status', 'draft');
+        $myEvents = $eventsQuery->limit(6)->get();
+
+        return view('dashboard.organizer', compact('stats', 'myEvents', 'filter'));
     }
-
-    $myEvents = $eventsQuery->limit(6)->get();
-
-    return view('dashboard.organizer', compact('stats', 'myEvents', 'filter'));
-}
-
 
     protected function participantDashboard()
     {
@@ -90,26 +97,18 @@ class DashboardController extends Controller
             'total_registrations' => $user->registrations()->count(),
             'confirmed_registrations' => $user->registrations()->confirmed()->count(),
             'total_certificates' => $user->certificates()->count(),
-            'total_points' => $user->total_points,
+            'total_points' => $user->total_points ?? 0,
         ];
 
         $myRegistrations = $user->registrations()
-            ->with(['event', 'transaction'])
+            ->with(['event.category', 'event.eventType', 'transaction'])
             ->latest()
             ->limit(6)
             ->get();
 
+        // Rekomendasi berdasarkan kategori yang paling sering diikuti
         $recommendedEvents = Event::published()
             ->availableForRegistration()
-            ->where('category_id', function ($query) use ($user) {
-                $query->select('category_id')
-                    ->from('events')
-                    ->join('registrations', 'events.id', '=', 'registrations.event_id')
-                    ->where('registrations.user_id', $user->id)
-                    ->groupBy('category_id')
-                    ->orderByRaw('COUNT(*) DESC')
-                    ->limit(1);
-            })
             ->limit(4)
             ->get();
 

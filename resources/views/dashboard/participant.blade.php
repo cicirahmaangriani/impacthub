@@ -128,6 +128,7 @@
                                     {{ ucfirst($registration->status) }}
                                 </span>
                             </div>
+                            
 
                             <div class="flex items-center space-x-4 mt-3">
                                 <span class="text-xs text-gray-500 flex items-center">
@@ -147,25 +148,45 @@
                                 @endif
                             </div>
 
-                            <div class="flex items-center space-x-2 mt-3">
-                                <a href="{{ route('registrations.show', $registration) }}" class="text-sm text-indigo-600 hover:text-indigo-700 font-medium">
-                                    View Details →
-                                </a>
-                            </div>
+                            <div class="flex items-center space-x-4 mt-3">
+    <a href="{{ route('events.show', $registration->event->slug) }}" 
+   class="text-sm text-indigo-600 hover:text-indigo-700 font-medium">
+    View Details →
+</a>
+
+    @if($registration->status === 'pending')
+        <form action="{{ route('registrations.destroy', $registration) }}"
+      method="POST"
+      onsubmit="return confirm('Yakin ingin menghapus event ini dari My Event?');">
+    @csrf
+    @method('DELETE')
+
+    <button type="submit"
+        class="text-sm text-red-600 hover:text-red-700 font-medium">
+        Hapus
+    </button>
+</form>
+    @endif
+</div>
                         </div>
                     </div>
                 @empty
-                    <div class="text-center py-12">
-                        <svg class="mx-auto h-16 w-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-                        </svg>
-                        <h3 class="mt-4 text-lg font-medium text-gray-900">No events yet</h3>
-                        <p class="mt-2 text-gray-600">Start exploring and join events to boost your skills!</p>
-                        <a href="{{ route('events.index') }}" class="mt-4 inline-flex items-center px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg transition">
-                            Explore Events
-                        </a>
-                    </div>
+            <div class="text-center py-12">
+                <svg class="mx-auto h-16 w-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
+                </svg>
+                <h3 class="mt-4 text-lg font-medium text-gray-900">No events yet</h3>
+                <p class="mt-2 text-gray-600">You haven’t joined any events yet.</p>
+            </div>
                 @endforelse
+                <!-- 🔥 TOMBOL EXPLORE EVENTS (SATU & SELALU MUNCUL) -->
+    <div class="mt-6 text-center">
+        <a href="{{ route('events.index') }}"
+           class="inline-flex items-center px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg transition">
+            Explore Events
+        </a>
+    </div>
             </div>
         </div>
 
