@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Transaction extends Model
 {
@@ -17,7 +18,7 @@ class Transaction extends Model
         'platform_fee',
         'organizer_amount',
         'payment_method',
-        'status',
+        'status', // pending | paid | failed | expired (sesuai sistem kamu)
         'payment_proof',
         'paid_at',
         'expired_at',
@@ -33,17 +34,20 @@ class Transaction extends Model
         'payment_response' => 'array',
     ];
 
-    public function registration()
+    public function registration(): BelongsTo
     {
-        return $this->belongsTo(Registration::class);
+        return $this->belongsTo(Registration::class, 'registration_id');
     }
 
-    public function user()
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
-    // Scopes
+    /**
+     * ✅ Scope yang dipakai di blade: Transaction::paid()->count()
+     * dan dipakai di DashboardController: Transaction::paid()->sum('amount')
+     */
     public function scopePaid($query)
     {
         return $query->where('status', 'paid');
@@ -54,14 +58,24 @@ class Transaction extends Model
         return $query->where('status', 'pending');
     }
 
+    public function scopeFailed($query)
+    {
+        return $query->where('status', 'failed');
+    }
+
+    public function scopeExpired($query)
+    {
+        return $query->where('status', 'expired');
+    }
+
     // Helpers
-    public static function generateTransactionCode()
+    public static function generateTransactionCode(): string
     {
         return 'TRX-' . strtoupper(uniqid());
     }
 
-    public static function calculatePlatformFee($amount)
+    public static function calculatePlatformFee(float $amount): float
     {
-        return $amount * 0.10; // 10% commission
+        return round($amount * 0.10, 2); // 10%
     }
 }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Registration extends Model
 {
@@ -13,7 +14,7 @@ class Registration extends Model
         'event_id',
         'user_id',
         'registration_code',
-        'status',
+        'status', // pending | confirmed | cancelled (atau sesuai sistem kamu)
         'notes',
         'cancellation_reason',
         'cancelled_at',
@@ -23,27 +24,17 @@ class Registration extends Model
         'cancelled_at' => 'datetime',
     ];
 
-    public function event()
+    public function event(): BelongsTo
     {
-        return $this->belongsTo(Event::class);
+        return $this->belongsTo(Event::class, 'event_id');
     }
 
-    public function user()
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function transaction()
-    {
-        return $this->hasOne(Transaction::class);
-    }
-
-    public function certificate()
-    {
-        return $this->hasOne(Certificate::class);
-    }
-
-    // Scopes
+    // Scopes (opsional tapi berguna)
     public function scopeConfirmed($query)
     {
         return $query->where('status', 'confirmed');
@@ -54,9 +45,8 @@ class Registration extends Model
         return $query->where('status', 'pending');
     }
 
-    // Helpers
-    public static function generateRegistrationCode()
+    public function scopeCancelled($query)
     {
-        return 'REG-' . strtoupper(uniqid());
+        return $query->where('status', 'cancelled');
     }
 }

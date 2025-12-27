@@ -6,14 +6,13 @@ use App\Models\Event;
 use App\Models\Registration;
 use App\Services\RegistrationService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 class RegistrationController extends Controller
 {
-    protected $registrationService;
-
-    public function __construct(RegistrationService $registrationService)
-    {
-        $this->registrationService = $registrationService;
+    public function __construct(
+        protected RegistrationService $registrationService
+    ) {
         $this->middleware('auth');
     }
 
@@ -23,8 +22,9 @@ class RegistrationController extends Controller
     public function index(Request $request)
     {
         $status = $request->get('status');
+
         $registrations = $this->registrationService->getUserRegistrations(
-            auth()->user(),
+            $request->user(),
             $status
         );
 
@@ -42,20 +42,44 @@ class RegistrationController extends Controller
 
         try {
             $registration = $this->registrationService->register(
-                auth()->user(),
+                $request->user(),
                 $event,
                 $validated
             );
 
-            if ($event->isFree()) {
-                return redirect()->route('registrations.show', $registration)
+            // ✅ Tentukan gratis/berbayar tanpa method isFree()
+            $isFree = (float) ($event->price ?? 0) <= 0;
+
+            // ✅ Redirect aman sesuai route yang ADA
+            if ($isFree) {
+                // kalau registrations.show ada, ke detail. kalau tidak, fallback ke index.
+                if (Route::has('registrations.show')) {
+                    return redirect()
+                        ->route('registrations.show', $registration)
+                        ->with('success', 'Registration successful!');
+                }
+
+                return redirect()
+                    ->route('registrations.index')
                     ->with('success', 'Registration successful!');
-            } else {
-                return redirect()->route('transactions.show', $registration->transaction)
+            }
+
+            // Event berbayar -> biasanya ke halaman pembayaran
+            // kamu belum punya transactions.show, jadi fallback ke registrations.index
+            if (Route::has('transactions.show') && $registration->relationLoaded('transaction') && $registration->transaction) {
+                return redirect()
+                    ->route('transactions.show', $registration->transaction)
                     ->with('info', 'Please complete payment to confirm your registration.');
             }
-        } catch (\Exception $e) {
-            return back()->with('error', $e->getMessage());
+
+            return redirect()
+                ->route('registrations.index')
+                ->with('info', 'Registration created. Please complete payment (route payment belum diarahkan).');
+
+        } catch (\Throwable $e) {
+            return back()
+                ->withInput()
+                ->with('error', $e->getMessage());
         }
     }
 
@@ -79,7 +103,7 @@ class RegistrationController extends Controller
         $this->authorize('cancel', $registration);
 
         $validated = $request->validate([
-            'cancellation_reason' => 'required|string',
+            'cancellation_reason' => 'required|string|max:500',
         ]);
 
         try {
@@ -89,8 +113,9 @@ class RegistrationController extends Controller
             );
 
             return back()->with('success', 'Registration cancelled successfully!');
-        } catch (\Exception $e) {
-            return back()->with('error', $e->getMessage());
+        } catch (\Throwable $e) {
+            return back()
+                ->with('error', $e->getMessage());
         }
     }
 }

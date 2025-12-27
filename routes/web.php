@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
@@ -8,21 +9,17 @@ use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\CertificateController;
 
+use App\Http\Controllers\Admin\ParticipantController;
+use App\Http\Controllers\Admin\EventVerificationController;
+use App\Http\Controllers\Admin\AdminEventController;
+
 /*
 |--------------------------------------------------------------------------
 | Public Routes
 |--------------------------------------------------------------------------
 */
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+Route::get('/', fn () => view('welcome'))->name('home');
 
-// (Opsional) Test route
-Route::get('/test-event-create', function () {
-    return 'Route berfungsi!';
-});
-
-// Public Event Listing & Detail (pakai slug)
 Route::get('/events', [EventController::class, 'index'])->name('events.index');
 Route::get('/events/{event:slug}', [EventController::class, 'show'])->name('events.show');
 
@@ -33,7 +30,7 @@ Route::get('/events/{event:slug}', [EventController::class, 'show'])->name('even
 */
 Route::middleware(['auth'])->group(function () {
 
-    // Dashboard umum (bisa redirect per role di controller)
+    // Dashboard umum (redirect per role di controller)
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     /*
@@ -41,23 +38,33 @@ Route::middleware(['auth'])->group(function () {
     | ADMIN ONLY
     |--------------------------------------------------------------------------
     */
-    Route::middleware(['can:isAdmin'])->prefix('admin')->name('admin.')->group(function () {
-        Route::get('/dashboard', [DashboardController::class, 'admin'])->name('dashboard');
+    Route::prefix('admin')
+        ->name('admin.')
+        ->middleware(['can:isAdmin'])
+        ->group(function () {
 
-        // (Kalau sudah ada modulnya nanti)
-        // Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');
-        // Route::get('/reports', [AdminReportController::class, 'index'])->name('reports.index');
-    });
+            Route::get('/dashboard', [DashboardController::class, 'admin'])->name('dashboard');
+
+            // Monitoring Event (Admin)
+            Route::get('/events', [AdminEventController::class, 'index'])->name('events.index');
+            Route::get('/events/{event}', [AdminEventController::class, 'show'])->name('events.show');
+
+            // Verifikasi Event (Admin)
+            Route::patch('/events/{event}/approve', [EventVerificationController::class, 'approve'])->name('events.approve');
+            Route::patch('/events/{event}/reject', [EventVerificationController::class, 'reject'])->name('events.reject');
+
+            // Monitoring Peserta (Admin)
+            Route::get('/participants', [ParticipantController::class, 'index'])->name('participants.index');
+            Route::get('/participants/{user}/registrations', [ParticipantController::class, 'registrations'])->name('participants.registrations');
+        });
 
     /*
     |--------------------------------------------------------------------------
     | SHARED: Registrations view (Admin + Organizer + Participant)
     |--------------------------------------------------------------------------
-    | Supaya admin bisa lihat registrasi, route ini tidak boleh participant-only.
     */
     Route::middleware(['can:viewRegistrations'])->group(function () {
-        Route::get('/registrations', [RegistrationController::class, 'index'])
-            ->name('registrations.index');
+        Route::get('/registrations', [RegistrationController::class, 'index'])->name('registrations.index');
     });
 
     /*
@@ -80,23 +87,14 @@ Route::middleware(['auth'])->group(function () {
     |--------------------------------------------------------------------------
     */
     Route::middleware(['can:isParticipant'])->group(function () {
-
-        // Registration
-        Route::post('/events/{event}/register', [RegistrationController::class, 'store'])
-            ->name('events.register');
-
-        // Transactions (for paid events)
-        Route::post('/events/{event}/pay', [TransactionController::class, 'store'])
-            ->name('events.pay');
-
-        // Certificate Download
-        Route::get('/certificate/{registration}', [CertificateController::class, 'show'])
-            ->name('certificate.show');
+        Route::post('/events/{event}/register', [RegistrationController::class, 'store'])->name('events.register');
+        Route::post('/events/{event}/pay', [TransactionController::class, 'store'])->name('events.pay');
+        Route::get('/certificate/{registration}', [CertificateController::class, 'show'])->name('certificate.show');
     });
 
     /*
     |--------------------------------------------------------------------------
-    | Profile (semua role yang login boleh)
+    | Profile
     |--------------------------------------------------------------------------
     */
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -104,9 +102,4 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-/*
-|--------------------------------------------------------------------------
-| Auth Routes (Laravel Breeze)
-|--------------------------------------------------------------------------
-*/
 require __DIR__ . '/auth.php';
