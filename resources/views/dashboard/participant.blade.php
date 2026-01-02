@@ -102,13 +102,15 @@
                     <div class="flex items-start space-x-4 p-4 border border-gray-200 rounded-xl hover:border-indigo-300 hover:shadow-md transition group">
                         <!-- Event Image -->
                         <div class="flex-shrink-0">
-                            @if($registration->event && $registration->event->image)
-
-                                <img src="{{ asset('storage/' . $registration->event->image) }}" class="h-20 w-20 rounded-lg object-cover" alt="{{ $registration->event->title }}">
+                            @if(optional($registration->event)->image)
+                                <img src="{{ asset('storage/' . $registration->event->image) }}"
+                                    class="h-20 w-20 rounded-lg object-cover"
+                                    alt="{{ optional($registration->event)->title }}">
                             @else
                                 <div class="h-20 w-20 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
                                     <svg class="h-10 w-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                     </svg>
                                 </div>
                             @endif
@@ -119,11 +121,12 @@
                             <div class="flex items-start justify-between">
                                 <div class="flex-1">
                                     <h3 class="text-base font-semibold text-gray-900 group-hover:text-indigo-600 transition truncate">
-                                        {{ optional($registration->event)->title ?? 'Event sudah dihapus' }}
-
+                                        {{ optional($registration->event)->title ?? 'Event tidak tersedia' }}
                                     </h3>
                                     <p class="text-sm text-gray-500 mt-1">
-                                        {{ optional(optional($registration->event)->eventType)->name ?? '—' }} • {{ optional(optional($registration->event)->category)->name ?? '—' }}
+                                        {{ optional($registration->event->eventType)->name ?? '-' }}
+                                        •
+                                        {{ optional($registration->event->category)->name ?? '-' }}
                                     </p>
                                 </div>
                                 <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $registration->status === 'confirmed' ? 'bg-green-100 text-green-800' : ($registration->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800') }}">
@@ -136,7 +139,7 @@
                                     <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                     </svg>
-                                    {{ optional(optional($registration->event)->start_date)->format('d M Y') ?? '' }}
+                                    {{ optional(optional($registration->event)->start_date)?->format('d M Y') ?? '-' }}
                                 </span>
                                 @if(optional($registration->event)->location)
                                     <span class="text-xs text-gray-500 flex items-center truncate">
@@ -144,7 +147,7 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                                         </svg>
-                                        {{ \Illuminate\Support\Str::limit(optional($registration->event)->location ?? '', 20) }}
+                                        {{ Str::limit(optional($registration->event)->location ?? '-', 20) }}
                                     </span>
                                 @endif
                             </div>

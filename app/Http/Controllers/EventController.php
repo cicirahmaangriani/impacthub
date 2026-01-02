@@ -9,6 +9,7 @@ use App\Models\EventType;
 use App\Services\EventService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 
 class EventController extends Controller
@@ -80,13 +81,10 @@ class EventController extends Controller
         'instructor_info' => 'nullable|string',
         'location' => 'nullable|string',
         'meeting_link' => 'nullable|string',
-        'start_date' => 'required|date',
-        'end_date' => 'required|date',
-        'quota' => 'required|integer',
-        'price' => 'required|numeric',
         'objectives' => 'nullable|string',
         'points_reward' => 'nullable|integer|min:0',
-        'registration_deadline' => 'required|date',
+        'certificate_available' => 'boolean',
+        'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
     ]);
     $validated['slug'] = Str::slug($validated['title']) . '-' . Str::random(6);
 
@@ -122,7 +120,7 @@ class EventController extends Controller
         
         $relatedEvents = Event::published()
             ->where('category_id', $event->category_id)
-            ->where('id', '!=', $event)
+            ->where('id', '!=', $event->id)
             ->limit(4)
             ->get();
 
@@ -160,7 +158,9 @@ class EventController extends Controller
         'registration_deadline' => 'required|date',
         'certificate_available' => 'boolean',
         'instructor_info' => 'nullable|string',
-        'image' => 'nullable|image'
+        'image' => 'nullable|image',
+        'objectives' => 'nullable|string',
+        'points_reward' => 'nullable|integer|min:0',
     ]);
 
     if ($validated['title'] !== $event->title) {
@@ -171,6 +171,10 @@ class EventController extends Controller
 
     // Upload image jika ada
     if ($request->hasFile('image')) {
+        // Hapus gambar lama jika ada
+        if ($event->image) {
+            Storage::disk('public')->delete($event->image);
+        }
         $validated['image'] = $request->file('image')->store('events', 'public');
     }
 
@@ -187,6 +191,11 @@ class EventController extends Controller
     $this->authorize('delete', $event);
 
     try {
+        // Hapus gambar jika ada
+        if ($event->image) {
+            Storage::disk('public')->delete($event->image);
+        }
+        
         $event->delete();
 
         return redirect()->route('events.index')
