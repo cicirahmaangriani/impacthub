@@ -14,6 +14,13 @@ export default {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
+            colors: {
+                abyss: '#01162b',
+                current: '#00385a',
+                mist: '#6a90b4',
+                veil: '#d2dbeb',
+                frost: '#94a2bf',
+            },
         },
     },
 

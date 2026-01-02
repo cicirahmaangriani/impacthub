@@ -7,7 +7,7 @@
     
     <!-- Header -->
     <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-900">Welcome back, {{ auth()->user()->name }}! 👋</h1>
+        <h1 class="text-3xl font-bold text-gray-900">Welcome back, {{ optional(auth()->user())->name ?? 'User' }}! 👋</h1>
         <p class="text-gray-600 mt-2">Track your learning journey and achievements</p>
     </div>
 
@@ -18,7 +18,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-blue-100 text-sm font-medium">My Events</p>
-                    <h3 class="text-3xl font-bold mt-2">{{ $stats['total_registrations'] }}</h3>
+                    <h3 class="text-3xl font-bold mt-2">{{ $stats['total_registrations'] ?? 0 }}</h3>
                     <p class="text-blue-100 text-xs mt-2">
                         <span class="font-semibold">{{ $stats['confirmed_registrations'] }}</span> Confirmed
                     </p>
@@ -130,7 +130,7 @@
                                     </p>
                                 </div>
                                 <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $registration->status === 'confirmed' ? 'bg-green-100 text-green-800' : ($registration->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800') }}">
-                                    {{ ucfirst($registration->status) }}
+                                    {{ ucfirst($registration->status ?? 'pending') }}
                                 </span>
                             </div>
 
@@ -153,7 +153,7 @@
                             </div>
 
                             <div class="flex items-center space-x-2 mt-3">
-                                <a href="{{ route('registrations.show', $registration) }}" class="text-sm text-indigo-600 hover:text-indigo-700 font-medium">
+                                <a href="{{ route('registrations.index', $registration) }}" class="text-sm text-indigo-600 hover:text-indigo-700 font-medium">
                                     View Details →
                                 </a>
                             </div>
@@ -186,8 +186,8 @@
                         <div class="group cursor-pointer">
                             <a href="{{ route('events.show', $event->slug) }}" class="block">
                                 <div class="relative h-32 rounded-lg overflow-hidden bg-gradient-to-br from-indigo-500 to-purple-600 mb-3">
-                                    @if($event->image)
-                                        <img src="{{ asset('storage/' . $event->image) }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" alt="{{ $event->title }}">
+                                    @if(optional($event)->image)
+                                        <img src="{{ asset('storage/' . optional($event)->image) }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" alt="{{ optional($event)->title ?? 'Event' }}">
                                     @endif
                                     @if($event->isFree())
                                         <span class="absolute top-2 right-2 px-2 py-1 bg-green-500 text-white text-xs font-bold rounded-full">
@@ -196,10 +196,10 @@
                                     @endif
                                 </div>
                                 <h4 class="font-semibold text-gray-900 group-hover:text-indigo-600 transition line-clamp-2 text-sm">
-                                    {{ $event->title }}
+                                    {{ optional($event)->title ?? 'Untitled' }}
                                 </h4>
                                 <p class="text-xs text-gray-500 mt-1">
-                                    {{ $event->category->icon }} {{ $event->category->name }}
+                                    {{ optional(optional($event)->category)->icon ?? '' }} {{ optional(optional($event)->category)->name ?? '—' }}
                                 </p>
                             </a>
                         </div>

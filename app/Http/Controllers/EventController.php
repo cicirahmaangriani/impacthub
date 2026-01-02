@@ -125,9 +125,6 @@ class EventController extends Controller
         return view('events.show', compact('event', 'relatedEvents'));
     }
 
-    /**
-     * Show the form for editing the specified event
-     */
     public function edit(Event $event)
     {
         $this->authorize('update', $event);
