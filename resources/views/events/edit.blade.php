@@ -1,12 +1,12 @@
 <x-app-layout>
 
-    <!-- Header -->
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Edit Kegiatan: {{ $event->title }}
-        </h2>
-        <p class="text-gray-600 mt-1">Perbarui informasi kegiatan Anda di bawah ini.</p>
-    </x-slot>
+<!-- Header -->
+<x-slot name="header">
+    <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        Edit Kegiatan: {{ $event->title }}
+    </h2>
+    <p class="text-gray-600 mt-1">Perbarui informasi kegiatan Anda di bawah ini.</p>
+</x-slot>
 
     <div class="min-h-screen bg-gray-50 py-8">
         <div class="container mx-auto px-4">
