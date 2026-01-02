@@ -130,7 +130,22 @@
                 </div>
             </form>
         </div>
-
+<form action="{{ route('events.index') }}" method="GET" id="filterForm">
+    <select name="category_id" 
+            onchange="this.form.submit()" 
+            class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
+        
+        <option value="">Semua Kategori</option>
+        
+        @foreach($categories as $category)
+            <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
+                {{ $category->icon }} {{ $category->name }}
+            </option>
+        @endforeach
+    </select>
+    
+    
+    </form>
 
         {{-- ======================= EVENT LIST ======================= --}}
         <div class="flex items-center justify-between mb-4">

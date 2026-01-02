@@ -37,7 +37,7 @@ class Event extends Model
         'status',
     ];
 
-
+    
     protected $casts = [
         'price' => 'decimal:2',
         'quota' => 'integer',

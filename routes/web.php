@@ -105,8 +105,12 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['can:isParticipant'])->group(function () {
         Route::post('/events/{event}/register', [RegistrationController::class, 'store'])->name('events.register');
         Route::post('/events/{event}/pay', [TransactionController::class, 'store'])->name('events.pay');
-        Route::get('/certificate/{registration}', [CertificateController::class, 'show'])->name('certificate.show');
+        Route::delete('/registrations/{registration}', [RegistrationController::class, 'destroy'])->name('registrations.destroy');
     });
+
+    // Certificate Download (shared across roles)
+    Route::get('/certificate/{registration}', [CertificateController::class, 'show'])
+        ->name('certificate.show');
 
     /*
     |--------------------------------------------------------------------------

@@ -6,6 +6,9 @@ use App\Models\Event;
 use App\Models\Registration;
 use App\Models\Transaction;
 use App\Models\User;
+use App\Models\Category;
+use App\Models\EventType;
+use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
@@ -16,6 +19,14 @@ class DashboardController extends Controller
     {
         $user = auth()->user();
 
+        // Ambil data kategori & tipe untuk filter global di layout dashboard
+        $categories = Category::all();
+        $eventTypes = EventType::all();
+
+        // Simpan data ini ke view share agar tersedia di dashboard manapun
+        view()->share('categories', $categories);
+        view()->share('eventTypes', $eventTypes);
+
         if ($user->isAdmin()) {
             return $this->adminDashboard();
         } elseif ($user->isOrganizer()) {
@@ -24,7 +35,6 @@ class DashboardController extends Controller
             return $this->participantDashboard();
         }
     }
-
 
     /**
      * Admin Dashboard view: resources/views/dashboard/admin.blade.php
@@ -54,7 +64,6 @@ class DashboardController extends Controller
     protected function organizerDashboard(Request $request)
     {
         $user = auth()->user();
-
         $filter = $request->get('filter');
 
         $stats = [
@@ -103,7 +112,7 @@ class DashboardController extends Controller
         ];
 
         $myRegistrations = Registration::where('user_id', $user->id)
-            ->whereHas('event') // ⬅️ BUANG REGISTRATION TANPA EVENT
+            ->whereHas('event')
             ->with([
                 'event',
                 'event.eventType',
@@ -114,17 +123,9 @@ class DashboardController extends Controller
             ->limit(6)
             ->get();
 
+        // Rekomendasi berdasarkan kategori yang paling sering diikuti
         $recommendedEvents = Event::published()
             ->availableForRegistration()
-            ->where('category_id', function ($query) use ($user) {
-                $query->select('category_id')
-                    ->from('events')
-                    ->join('registrations', 'events.id', '=', 'registrations.event_id')
-                    ->where('registrations.user_id', $user->id)
-                    ->groupBy('category_id')
-                    ->orderByRaw('COUNT(*) DESC')
-                    ->limit(1);
-            })
             ->limit(4)
             ->get();
 
