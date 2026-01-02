@@ -1,6 +1,5 @@
 <x-app-layout>
-<div class="min-h-screen bg-veil py-8">
-    <div class="max-w-7xl mx-auto px-4">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     
     <!-- Breadcrumb -->
     <nav class="flex mb-6" aria-label="Breadcrumb">
@@ -114,7 +113,7 @@
             <!-- Objectives -->
             @if($event->objectives)
                 <div class="bg-white rounded-2xl shadow-sm p-6 mb-6">
-                    <h2 class="text-xl font-bold text-gray-900 mb-4">🎯 Tujuan Pembelajaran</h2>
+                    <h2 class="text-xl font-bold text-gray-900 mb-4">🎯 Tujuan Event</h2>
                     <div class="prose prose-indigo max-w-none text-gray-700">
                         {!! nl2br(e($event->objectives)) !!}
                     </div>
@@ -299,17 +298,15 @@
     </div>
 
     <!-- Related Events -->
-    <div class="bg-white rounded-2xl shadow p-3">
-        @if($relatedEvents->count() > 0)
-            <div class="mt-12">
-                <h2 class="text-2xl font-bold text-gray-900 mb-6">Event Serupa</h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    @foreach($relatedEvents as $relatedEvent)
-                        @include('events.partials.event-card', ['event' => $relatedEvent])
-                    @endforeach
-                </div>
+    @if($relatedEvents->count() > 0)
+        <div class="mt-12">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">Event Serupa</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                @foreach($relatedEvents as $relatedEvent)
+                    @include('events.partials.event-card', ['event' => $relatedEvent])
+                @endforeach
             </div>
-        @endif
-    </div>
+        </div>
+    @endif
 </div>
 </x-app-layout>
