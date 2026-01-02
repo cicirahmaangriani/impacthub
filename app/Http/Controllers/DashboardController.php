@@ -28,7 +28,7 @@ class DashboardController extends Controller
         view()->share('eventTypes', $eventTypes);
 
         if ($user->isAdmin()) {
-            return $this->adminDashboard();
+            return $this->admin();
         } elseif ($user->isOrganizer()) {
             return $this->organizerDashboard($request);
         } else {
