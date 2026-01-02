@@ -25,11 +25,13 @@
         @endif
 
         {{-- CATEGORY --}}
-        <div class="absolute top-3 right-3">
-            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-white/90 text-gray-900 backdrop-blur-sm">
-                {{ $event->category->icon }} {{ $event->category->name }}
-            </span>
-        </div>
+        @if($event->category)
+            <div class="absolute top-3 right-3">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-white/90 text-gray-900 backdrop-blur-sm">
+                    {{ $event->category->icon ?? '📌' }} {{ $event->category->name }}
+                </span>
+            </div>
+        @endif
 
         {{-- PRICE --}}
         <div class="absolute bottom-3 right-3">
