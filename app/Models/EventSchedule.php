@@ -13,6 +13,7 @@ class EventSchedule extends Model
         'start_time',
         'end_time',
         'location',
+        'image', 
     ];
 
     protected $casts = [

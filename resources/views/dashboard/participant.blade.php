@@ -7,7 +7,7 @@
     
     <!-- Header -->
     <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-900">Welcome back, {{ auth()->user()->name }}! 👋</h1>
+        <h1 class="text-3xl font-bold text-gray-900">Welcome back, {{ optional(auth()->user())->name ?? 'User' }}! 👋</h1>
         <p class="text-gray-600 mt-2">Track your learning journey and achievements</p>
     </div>
 
@@ -18,7 +18,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-blue-100 text-sm font-medium">My Events</p>
-                    <h3 class="text-3xl font-bold mt-2">{{ $stats['total_registrations'] }}</h3>
+                    <h3 class="text-3xl font-bold mt-2">{{ $stats['total_registrations'] ?? 0 }}</h3>
                     <p class="text-blue-100 text-xs mt-2">
                         <span class="font-semibold">{{ $stats['confirmed_registrations'] }}</span> Confirmed
                     </p>
@@ -102,7 +102,8 @@
                     <div class="flex items-start space-x-4 p-4 border border-gray-200 rounded-xl hover:border-indigo-300 hover:shadow-md transition group">
                         <!-- Event Image -->
                         <div class="flex-shrink-0">
-                            @if($registration->event->image)
+                            @if($registration->event && $registration->event->image)
+
                                 <img src="{{ asset('storage/' . $registration->event->image) }}" class="h-20 w-20 rounded-lg object-cover" alt="{{ $registration->event->title }}">
                             @else
                                 <div class="h-20 w-20 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
@@ -118,14 +119,15 @@
                             <div class="flex items-start justify-between">
                                 <div class="flex-1">
                                     <h3 class="text-base font-semibold text-gray-900 group-hover:text-indigo-600 transition truncate">
-                                        {{ $registration->event->title }}
+                                        {{ optional($registration->event)->title ?? 'Event sudah dihapus' }}
+
                                     </h3>
                                     <p class="text-sm text-gray-500 mt-1">
-                                        {{ $registration->event->eventType->name }} • {{ $registration->event->category->name }}
+                                        {{ optional(optional($registration->event)->eventType)->name ?? '—' }} • {{ optional(optional($registration->event)->category)->name ?? '—' }}
                                     </p>
                                 </div>
                                 <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $registration->status === 'confirmed' ? 'bg-green-100 text-green-800' : ($registration->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800') }}">
-                                    {{ ucfirst($registration->status) }}
+                                    {{ ucfirst($registration->status ?? 'pending') }}
                                 </span>
                             </div>
 
@@ -134,21 +136,21 @@
                                     <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                     </svg>
-                                    {{ $registration->event->start_date->format('d M Y') }}
+                                    {{ optional(optional($registration->event)->start_date)->format('d M Y') ?? '' }}
                                 </span>
-                                @if($registration->event->location)
+                                @if(optional($registration->event)->location)
                                     <span class="text-xs text-gray-500 flex items-center truncate">
                                         <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                                         </svg>
-                                        {{ Str::limit($registration->event->location, 20) }}
+                                        {{ \Illuminate\Support\Str::limit(optional($registration->event)->location ?? '', 20) }}
                                     </span>
                                 @endif
                             </div>
 
                             <div class="flex items-center space-x-2 mt-3">
-                                <a href="{{ route('registrations.show', $registration) }}" class="text-sm text-indigo-600 hover:text-indigo-700 font-medium">
+                                <a href="{{ route('registrations.index', $registration) }}" class="text-sm text-indigo-600 hover:text-indigo-700 font-medium">
                                     View Details →
                                 </a>
                             </div>
@@ -181,8 +183,8 @@
                         <div class="group cursor-pointer">
                             <a href="{{ route('events.show', $event->slug) }}" class="block">
                                 <div class="relative h-32 rounded-lg overflow-hidden bg-gradient-to-br from-indigo-500 to-purple-600 mb-3">
-                                    @if($event->image)
-                                        <img src="{{ asset('storage/' . $event->image) }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" alt="{{ $event->title }}">
+                                    @if(optional($event)->image)
+                                        <img src="{{ asset('storage/' . optional($event)->image) }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" alt="{{ optional($event)->title ?? 'Event' }}">
                                     @endif
                                     @if($event->isFree())
                                         <span class="absolute top-2 right-2 px-2 py-1 bg-green-500 text-white text-xs font-bold rounded-full">
@@ -191,10 +193,10 @@
                                     @endif
                                 </div>
                                 <h4 class="font-semibold text-gray-900 group-hover:text-indigo-600 transition line-clamp-2 text-sm">
-                                    {{ $event->title }}
+                                    {{ optional($event)->title ?? 'Untitled' }}
                                 </h4>
                                 <p class="text-xs text-gray-500 mt-1">
-                                    {{ $event->category->icon }} {{ $event->category->name }}
+                                    {{ optional(optional($event)->category)->icon ?? '' }} {{ optional(optional($event)->category)->name ?? '—' }}
                                 </p>
                             </a>
                         </div>

@@ -1,5 +1,6 @@
 <x-app-layout>
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="min-h-screen bg-veil py-8">
+    <div class="max-w-7xl mx-auto px-4">
     
     <!-- Breadcrumb -->
     <nav class="flex mb-6" aria-label="Breadcrumb">
@@ -298,15 +299,17 @@
     </div>
 
     <!-- Related Events -->
-    @if($relatedEvents->count() > 0)
-        <div class="mt-12">
-            <h2 class="text-2xl font-bold text-gray-900 mb-6">Event Serupa</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                @foreach($relatedEvents as $relatedEvent)
-                    @include('events.partials.event-card', ['event' => $relatedEvent])
-                @endforeach
+    <div class="bg-white rounded-2xl shadow p-3">
+        @if($relatedEvents->count() > 0)
+            <div class="mt-12">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">Event Serupa</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    @foreach($relatedEvents as $relatedEvent)
+                        @include('events.partials.event-card', ['event' => $relatedEvent])
+                    @endforeach
+                </div>
             </div>
-        </div>
-    @endif
+        @endif
+    </div>
 </div>
 </x-app-layout>

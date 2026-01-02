@@ -10,7 +10,7 @@
             <div class="flex items-center justify-center h-full text-white">
                 <svg class="h-20 w-20 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                 </svg>
             </div>
         @endif
@@ -152,48 +152,13 @@
 
 
         {{-- FOOTER BUTTONS --}}
-        <div class="flex items-center justify-between pt-4 border-t border-gray-200">
-
-            {{-- Edit --}}
-            @can('update', $event)
-                <a href="{{ route('events.edit', $event) }}"
-                   class="px-3 py-1.5 bg-yellow-500 text-white text-xs font-semibold rounded-lg hover:bg-yellow-600 transition">
-                    ✏️ Edit
-                </a>
-            @endcan
-
-            {{-- Hapus --}}
-            @can('delete', $event)
-            <form action="{{ route('events.destroy', $event) }}" method="POST"
-                onsubmit="return confirm('Apakah Anda yakin ingin menghapus event ini?')">
-                @csrf
-                @method('DELETE')
-
-                <button type="submit"
-                    class="inline-flex items-center gap-2 px-4 py-2 
-                        bg-gradient-to-r from-red-500 to-red-700 
-                        text-white text-sm font-semibold rounded-lg 
-                        shadow-md hover:shadow-lg hover:scale-[1.03] 
-                        active:scale-95 transition-all duration-200">
-
-                    <svg xmlns="http://www.w3.org/2000/svg" 
-                        class="h-4 w-4" fill="none" viewBox="0 0 24 24" 
-                        stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7h6m-7 0V5a2 2 0 012-2h2a2 2 0 012 2v2m4 0H5" />
-                    </svg>
-
-                    Hapus Event
-                </button>
-            </form>
-            @endcan
-
-            {{-- Detail --}}
+        <div class="flex items-center justify-between pt-4 border-t border-gray-200">  
             <a href="{{ route('events.show', $event->slug) }}"
-               class="px-4 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-lg hover:bg-indigo-700 transition">
+               class="w-full bg-current hover:bg-mist text-white py-3 rounded-lg font-semibold transition text-center">
                 Lihat Detail
             </a>
 
         </div>
+            
     </div>
 </div>

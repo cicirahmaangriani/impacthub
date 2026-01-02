@@ -13,11 +13,9 @@ class DashboardController extends Controller
         $this->middleware('auth');
     }
 
-    /**
-     * Display dashboard based on user role
-     */
+    
     public function index(Request $request)
-{
+    {
     $user = auth()->user();
 
     if ($user->isAdmin()) {
@@ -76,7 +74,7 @@ class DashboardController extends Controller
         $eventsQuery->where('status', 'draft');
     }
 
-    $myEvents = $eventsQuery->limit(6)->get();
+    $myEvents = $eventsQuery->get();
 
     return view('dashboard.organizer', compact('stats', 'myEvents', 'filter'));
 }
