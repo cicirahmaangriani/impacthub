@@ -93,7 +93,7 @@
         <div class="bg-white rounded-2xl shadow-sm p-6">
             <div class="flex items-center justify-between mb-6">
                 <h2 class="text-xl font-bold text-gray-900">Recent Events</h2>
-                <a href="#" class="text-sm text-indigo-600 hover:text-indigo-700 font-medium">View All →</a>
+                <a href="{{ route('admin.events.index') }}" class="text-sm text-indigo-600 hover:text-indigo-700 font-medium">View All →</a>
             </div>
             
             <div class="space-y-4">
@@ -112,7 +112,7 @@
                         </div>
                         <div class="flex-1 min-w-0">
                             <p class="text-sm font-semibold text-gray-900 truncate">{{ $event->title }}</p>
-                            <p class="text-xs text-gray-500 mt-1">by {{ $event->user->name }}</p>
+                            <p class="text-xs text-gray-500 mt-1">by {{ $event->user->name ?? 'Unknown' }}</p>
                             <div class="flex items-center space-x-4 mt-2">
                                 <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium {{ $event->status === 'published' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">
                                     {{ ucfirst($event->status) }}
@@ -122,7 +122,7 @@
                                 </span>
                             </div>
                         </div>
-                        <a href="{{ route('admin.events.show', $event->id) }}" class="flex-shrink-0 text-indigo-600 hover:text-indigo-700">
+                        <a href="{{ route('admin.events.show', $event->slug) }}" class="flex-shrink-0 text-indigo-600 hover:text-indigo-700">
                             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                             </svg>

@@ -69,31 +69,17 @@ class RegistrationController extends Controller
             // Tentukan gratis/berbayar
             $isFree = (float) ($event->price ?? 0) <= 0;
 
-            // Redirect aman sesuai route yang ADA
+            // Redirect based on event type
             if ($isFree) {
-                // kalau registrations.show ada, ke detail. kalau tidak, fallback ke index.
-                if (Route::has('registrations.show')) {
-                    return redirect()
-                        ->route('registrations.show', $registration)
-                        ->with('success', 'Registration successful!');
-                }
-
                 return redirect()
-                    ->route('registrations.index')
-                    ->with('success', 'Registration successful!');
+                    ->route('dashboard')
+                    ->with('success', 'Pendaftaran berhasil! Event gratis sudah dikonfirmasi.');
             }
 
-            // Event berbayar -> biasanya ke halaman pembayaran
-            // kamu belum punya transactions.show, jadi fallback ke registrations.index
-            if (Route::has('transactions.show') && $registration->relationLoaded('transaction') && $registration->transaction) {
-                return redirect()
-                    ->route('transactions.show', $registration->transaction)
-                    ->with('info', 'Please complete payment to confirm your registration.');
-            }
-
+            // Event berbayar - redirect ke dashboard dengan info pembayaran
             return redirect()
-                ->route('registrations.index')
-                ->with('info', 'Registration created. Please complete payment (route payment belum diarahkan).');
+                ->route('dashboard')
+                ->with('info', 'Pendaftaran berhasil! Silakan lanjutkan pembayaran untuk konfirmasi.');
 
         } catch (\Throwable $e) {
             return back()

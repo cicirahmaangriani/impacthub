@@ -104,7 +104,25 @@ class EventController extends Controller
             ->limit(4)
             ->get();
 
-        return view('events.show', compact('event', 'relatedEvents'));
+        // Check user status for registration
+        $alreadyRegistered = false;
+        $isOwner = false;
+        $isAdmin = false;
+        $isOrganizer = false;
+        $isParticipant = false;
+        
+        if (auth()->check()) {
+            $user = auth()->user();
+            $alreadyRegistered = $event->registrations()->where('user_id', $user->id)->exists();
+            $isOwner = $event->user_id === $user->id;
+            $isAdmin = $user->role === 'admin';
+            $isOrganizer = $user->role === 'organizer';
+            $isParticipant = $user->role === 'participant';
+        }
+        
+        $isFull = $event->registered_count >= $event->quota;
+
+        return view('events.show', compact('event', 'relatedEvents', 'alreadyRegistered', 'isFull', 'isOwner', 'isAdmin', 'isOrganizer', 'isParticipant'));
     }
 
     public function edit(Event $event)

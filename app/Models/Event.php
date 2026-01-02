@@ -76,6 +76,46 @@ class Event extends Model
     }
 
     /**
+     * Category relationship
+     */
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    /**
+     * Event Type relationship
+     */
+    public function eventType(): BelongsTo
+    {
+        return $this->belongsTo(EventType::class);
+    }
+
+    /**
+     * Event Schedules
+     */
+    public function schedules(): HasMany
+    {
+        return $this->hasMany(EventSchedule::class);
+    }
+
+    /**
+     * Event Materials
+     */
+    public function materials(): HasMany
+    {
+        return $this->hasMany(EventMaterial::class);
+    }
+
+    /**
+     * Certificates issued for this event
+     */
+    public function certificates(): HasMany
+    {
+        return $this->hasMany(Certificate::class);
+    }
+
+    /**
      * Scope: event yang published
      */
     public function scopePublished($query)

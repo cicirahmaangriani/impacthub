@@ -374,9 +374,11 @@
                         
                         <!-- Badges -->
                         <div class="absolute top-4 left-4">
-                            <span class="glass-morphism px-3 py-1.5 rounded-full text-xs font-bold text-white border border-white/20">
-                                {{ $event->category->icon ?? '📅' }} {{ $event->category->name ?? 'Event' }}
-                            </span>
+                            @if($event->category)
+                                <span class="glass-morphism px-3 py-1.5 rounded-full text-xs font-bold text-white border border-white/20">
+                                    {{ $event->category->icon ?? '📅' }} {{ $event->category->name ?? 'Event' }}
+                                </span>
+                            @endif
                         </div>
                         
                         <div class="absolute top-4 right-4">

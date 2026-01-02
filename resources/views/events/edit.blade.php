@@ -251,3 +251,4 @@
             }
         });
     </script>
+</x-app-layout>

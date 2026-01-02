@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Str;
 
 class Registration extends Model
 {
@@ -32,6 +34,26 @@ class Registration extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function transaction(): HasOne
+    {
+        return $this->hasOne(Transaction::class, 'registration_id');
+    }
+
+    public function certificate(): HasOne
+    {
+        return $this->hasOne(Certificate::class, 'registration_id');
+    }
+
+    // Generate unique registration code
+    public static function generateRegistrationCode(): string
+    {
+        do {
+            $code = 'REG-' . strtoupper(Str::random(8));
+        } while (self::where('registration_code', $code)->exists());
+
+        return $code;
     }
 
     // Scopes (opsional tapi berguna)

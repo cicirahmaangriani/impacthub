@@ -53,9 +53,11 @@
 
         {{-- Event Type & Venue --}}
         <div class="flex items-center space-x-2 mb-3">
-            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                {{ $event->eventType->name }}
-            </span>
+            @if($event->eventType)
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                    {{ $event->eventType->name }}
+                </span>
+            @endif
 
             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
                 {{ $event->venue_type === 'online' 
@@ -114,7 +116,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                           d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                 </svg>
-                {{ $event->user->name }}
+                {{ $event->user->name ?? 'Unknown Organizer' }}
             </div>
 
         </div>

@@ -106,7 +106,7 @@
 
                                 <td class="px-4 py-3">
                                     <a
-                                        href="{{ route('admin.events.show', $event->id) }}"
+                                        href="{{ route('admin.events.show', $event->slug) }}"
                                         class="inline-flex items-center px-3 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700"
                                     >
                                         Detail
