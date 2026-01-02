@@ -112,8 +112,14 @@
                                 <!-- Image -->
                                 <div>
                                     <label class="block text-sm font-semibold">Poster *</label>
-                                    <input type="file" name="image" required accept="image/*"
+                                    <input type="file" name="image" required accept="image/*" id="imageInput"
                                            class="w-full border rounded-lg p-3">
+                                    <p class="text-xs text-gray-500 mt-1">Format: JPG, PNG, GIF. Maksimal 2MB</p>
+                                    
+                                    <!-- Preview -->
+                                    <div id="imagePreview" class="mt-3 hidden">
+                                        <img id="previewImg" src="" alt="Preview" class="max-w-xs rounded-lg shadow-md">
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -251,4 +257,19 @@
 
         </div>
     </div>
+
+    <script>
+        // Image preview
+        document.getElementById('imageInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    document.getElementById('previewImg').src = event.target.result;
+                    document.getElementById('imagePreview').classList.remove('hidden');
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
 </x-app-layout>

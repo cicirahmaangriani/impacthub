@@ -88,12 +88,17 @@
                                 <!-- Banner -->
                                 <div>
                                     <label class="block text-sm font-semibold mb-1">Poster</label>
-                                    <input type="file" name="image" class="w-full p-3 border rounded-lg">
+                                    <input type="file" name="image" id="imageInput" accept="image/*" class="w-full p-3 border rounded-lg">
+                                    <p class="text-xs text-gray-500 mt-1">Format: JPG, PNG, GIF. Maksimal 2MB. Kosongkan jika tidak ingin mengubah gambar.</p>
 
-                                    @if($event->image)
-                                        <img src="{{ asset('storage/' . $event->image) }}"
-                                             class="mt-3 w-64 rounded-lg shadow-md">
-                                    @endif
+                                    <div class="mt-3">
+                                        @if($event->image)
+                                            <img id="previewImg" src="{{ asset('storage/' . $event->image) }}"
+                                                 class="w-64 rounded-lg shadow-md">
+                                        @else
+                                            <img id="previewImg" src="" alt="Preview" class="w-64 rounded-lg shadow-md hidden">
+                                        @endif
+                                    </div>
                                 </div>
 
                             </div>
@@ -233,5 +238,21 @@
 
         </div>
     </div>
+
+    <script>
+        // Image preview
+        document.getElementById('imageInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const img = document.getElementById('previewImg');
+                    img.src = event.target.result;
+                    img.classList.remove('hidden');
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
 
 </x-app-layout>

@@ -90,8 +90,8 @@
     <!-- Responsive -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1 px-4">
-            <a href="{{ route('home') }}" class="block py-2 text-sm text-gray-700">Beranda</a>
-            <a href="{{ route('events.index') }}" class="block py-2 text-sm text-gray-700">Kegiatan</a>
+            <a href="{{ route('home') }}" class="block py-2 text-sm {{ request()->routeIs('home') ? 'text-indigo-700 font-semibold border-l-4 border-indigo-500 pl-3' : 'text-gray-700' }}">Beranda</a>
+            <a href="{{ route('events.index') }}" class="block py-2 text-sm {{ request()->routeIs('events.*') ? 'text-indigo-700 font-semibold border-l-4 border-indigo-500 pl-3' : 'text-gray-700' }}">Kegiatan</a>
         </div>
 
         <div class="pt-4 pb-3 border-t border-gray-200 px-4">

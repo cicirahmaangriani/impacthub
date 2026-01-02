@@ -14,7 +14,22 @@ use App\Http\Controllers\CertificateController;
 |--------------------------------------------------------------------------
 */
 Route::get('/', function () {
-    return view('welcome');
+    try {
+        // Ambil 6 event terbaru yang published - simplified query
+        $events = \App\Models\Event::select('id', 'user_id', 'category_id', 'event_type_id', 'title', 'slug', 'description', 
+                     'location', 'price', 'quota', 'registered_count', 'start_date', 
+                     'registration_deadline', 'image', 'status', 'created_at')
+            ->where('status', 'published')
+            ->orderBy('created_at', 'desc')
+            ->limit(6)
+            ->get();
+    } catch (\Exception $e) {
+        // Jika ada error, gunakan collection kosong
+        \Log::error('Error loading events on welcome page: ' . $e->getMessage());
+        $events = collect([]);
+    }
+    
+    return view('welcome', compact('events'));
 })->name('home');
 
 // Public Event Listing (detail route dipindah ke bawah)

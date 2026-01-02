@@ -9,6 +9,7 @@ use App\Models\EventType;
 use App\Services\EventService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 
 class EventController extends Controller
@@ -83,6 +84,7 @@ class EventController extends Controller
         'objectives' => 'nullable|string',
         'points_reward' => 'nullable|integer|min:0',
         'certificate_available' => 'boolean',
+        'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
     ]);
     $validated['slug'] = Str::slug($validated['title']) . '-' . Str::random(6);
 
@@ -172,6 +174,10 @@ class EventController extends Controller
 
     // Upload image jika ada
     if ($request->hasFile('image')) {
+        // Hapus gambar lama jika ada
+        if ($event->image) {
+            Storage::disk('public')->delete($event->image);
+        }
         $validated['image'] = $request->file('image')->store('events', 'public');
     }
 
@@ -188,6 +194,11 @@ class EventController extends Controller
     $this->authorize('delete', $event);
 
     try {
+        // Hapus gambar jika ada
+        if ($event->image) {
+            Storage::disk('public')->delete($event->image);
+        }
+        
         $event->delete();
 
         return redirect()->route('events.index')
