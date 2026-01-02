@@ -1,259 +1,175 @@
 
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-abyss leading-tight">
             Buat Kegiatan Baru
         </h2>
-        <p class="text-gray-600 mt-2">Isi informasi lengkap tentang kegiatan yang akan Anda selenggarakan</p>
+        <p class="text-frost mt-2">
+            Isi informasi lengkap tentang kegiatan yang akan Anda selenggarakan
+        </p>
     </x-slot>
 
-    <div class="min-h-screen bg-gray-50 py-8">
-        <div class="container mx-auto px-4">
+    <div class="min-h-screen bg-veil py-8">
+        <div class="max-w-7xl mx-auto px-4">
 
             <form action="{{ route('events.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
 
-
                 <div class="grid lg:grid-cols-3 gap-6">
 
-                    <!-- ====================== MAIN FORM ======================= -->
+                    <!-- MAIN FORM -->
                     <div class="lg:col-span-2 space-y-6">
 
-                        <!-- BASIC INFORMATION -->
-                        <div class="bg-white rounded-xl shadow-sm p-6">
-                            <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
-                                <i class="fas fa-info-circle text-blue-600 mr-3"></i> Informasi Dasar
-                            </h2>
+                        <!-- SECTION CARD -->
+                        @php
+                        function sectionHeader($title) {
+                            return "<h2 class='text-lg font-bold text-abyss mb-6'>$title</h2>";
+                        }
+                        @endphp
+
+                        <!-- BASIC INFO -->
+                        <div class="bg-white rounded-xl shadow p-6">
+                            {!! sectionHeader('Informasi Dasar') !!}
 
                             <div class="space-y-5">
 
-                                <!-- Title -->
                                 <div>
-                                    <label class="block text-sm font-semibold">Judul Kegiatan *</label>
+                                    <label class="block text-sm font-semibold text-abyss">Judul Kegiatan *</label>
                                     <input type="text" name="title" required
-                                           class="w-full px-4 py-3 border rounded-lg"
-                                           placeholder="Contoh: Workshop Digital Marketing 2025">
+                                        class="w-full px-4 py-3 border border-veil rounded-lg focus:ring-current focus:border-current">
                                 </div>
 
-                                <!-- Category -->
                                 <div>
-                                    <label class="block text-sm font-semibold">Kategori *</label>
+                                    <label class="block text-sm font-semibold text-abyss">Kategori *</label>
                                     <select name="category_id" required
-                                            class="w-full px-4 py-3 border rounded-lg @error('category_id') border-red-500 @enderror">
-
-                                        <option value="" disabled {{ old('category_id') ? '' : 'selected' }}>
-                                            — Pilih Kategori —
-                                        </option>
-
+                                        class="w-full px-4 py-3 border border-veil rounded-lg focus:ring-current focus:border-current">
+                                        <option disabled selected>— Pilih Kategori —</option>
                                         @foreach($categories as $cat)
-                                            <option value="{{ $cat->id }}" 
-                                                {{ old('category_id') == $cat->id ? 'selected' : '' }}>
-                                                {{ $cat->name }}
-                                            </option>
+                                            <option value="{{ $cat->id }}">{{ $cat->name }}</option>
                                         @endforeach
                                     </select>
-
-                                    @error('category_id')
-                                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                                    @enderror
                                 </div>
 
-
-    <!-- Event Type ID (online/offline) -->
-    <div>
-        <label class="block text-sm font-semibold">Tipe Event *</label>
-        <select name="event_type_id" required
-                class="w-full px-4 py-3 border rounded-lg @error('event_type_id') border-red-500 @enderror">
-
-            <option value="" disabled {{ old('event_type_id') ? '' : 'selected' }}>
-                — Pilih Tipe Event —
-            </option>
-
-            @foreach($eventTypes as $type)
-                <option value="{{ $type->id }}" 
-                    {{ old('event_type_id') == $type->id ? 'selected' : '' }}>
-                    {{ $type->name }}
-                </option>
-            @endforeach
-        </select>
-
-        @error('event_type_id')
-            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-        @enderror
-    </div>
-
-
-    <!-- Venue Type -->
-    <div>
-        <label class="block text-sm font-semibold">Venue *</label>
-            <div class="grid grid-cols-2 gap-4">
-                <label class="flex items-center p-3 border rounded-lg cursor-pointer">
-                    <input type="radio" name="venue_type" value="offline" class="mr-3">
-                        Offline
-                </label>
-                <label class="flex items-center p-3 border rounded-lg cursor-pointer">
-                    <input type="radio" name="venue_type" value="online" class="mr-3">
-                        Online
-                </label>
-                <label class="flex items-center p-3 border rounded-lg cursor-pointer">
-                        <input type="radio" name="venue_type" value="hybrid" class="mr-3">
-                            Hybrid
-                </label>
-            </div>
-   </div>
-
-                                <!-- Description -->
                                 <div>
-                                    <label class="block text-sm font-semibold">Deskripsi *</label>
-                                    <textarea name="description" rows="6" required
-                                              class="w-full px-4 py-3 border rounded-lg"
-                                              placeholder="Jelaskan detail kegiatan..."></textarea>
+                                    <label class="block text-sm font-semibold text-abyss">Tipe Event *</label>
+                                    <select name="event_type_id" required
+                                        class="w-full px-4 py-3 border border-veil rounded-lg focus:ring-current focus:border-current">
+                                        <option disabled selected>— Pilih Tipe Event —</option>
+                                        @foreach($eventTypes as $type)
+                                            <option value="{{ $type->id }}">{{ $type->name }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
 
-                                <!-- Image -->
                                 <div>
-                                    <label class="block text-sm font-semibold">Poster *</label>
-                                    <input type="file" name="image" required accept="image/*" id="imageInput"
-                                           class="w-full border rounded-lg p-3">
-                                    <p class="text-xs text-gray-500 mt-1">Format: JPG, PNG, GIF. Maksimal 2MB</p>
-                                    
-                                    <!-- Preview -->
-                                    <div id="imagePreview" class="mt-3 hidden">
-                                        <img id="previewImg" src="" alt="Preview" class="max-w-xs rounded-lg shadow-md">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- ====================== SCHEDULE ======================= -->
-                        <div class="bg-white rounded-xl shadow-sm p-6">
-                            <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
-                                <i class="fas fa-calendar-alt text-purple-600 mr-3"></i> Jadwal & Lokasi
-                            </h2>
-
-                            <div class="space-y-5">
-
-                                <!-- Start -->
-                                <div class="grid md:grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="text-sm font-semibold">Tanggal Mulai *</label>
-                                        <input type="date" name="start_date" required class="w-full px-4 py-3 border rounded-lg">
-                                    </div>
-                                    <div>
-                                        <label class="text-sm font-semibold">Tanggal Selesai *</label>
-                                        <input type="date" name="end_date" required class="w-full px-4 py-3 border rounded-lg">
+                                    <label class="block text-sm font-semibold text-abyss">Venue *</label>
+                                    <div class="grid grid-cols-3 gap-3 mt-2">
+                                        @foreach(['offline','online','hybrid'] as $v)
+                                        <label class="flex items-center justify-center border border-veil rounded-lg py-2 cursor-pointer hover:bg-veil">
+                                            <input type="radio" name="venue_type" value="{{ $v }}" class="mr-2">
+                                            {{ ucfirst($v) }}
+                                        </label>
+                                        @endforeach
                                     </div>
                                 </div>
 
-                                <!-- Location -->
                                 <div>
-                                    <label class="text-sm font-semibold">Lokasi *</label>
-                                    <input type="text" name="location" required class="w-full px-4 py-3 border rounded-lg">
+                                    <label class="block text-sm font-semibold text-abyss">Deskripsi *</label>
+                                    <textarea name="description" rows="5" required
+                                        class="w-full px-4 py-3 border border-veil rounded-lg focus:ring-current focus:border-current"></textarea>
                                 </div>
 
-                                <!-- Meeting Link (Online Only) -->
                                 <div>
-                                    <label class="text-sm font-semibold">Link Meeting (Online)</label>
-                                    <input type="url" name="meeting_link" class="w-full px-4 py-3 border rounded-lg">
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- ====================== REGISTRATION ======================= -->
-                        <div class="bg-white rounded-xl shadow-sm p-6">
-                            <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
-                                <i class="fas fa-users text-green-600 mr-3"></i> Detail Pendaftaran
-                            </h2>
-
-                            <div class="space-y-5">
-                                <!-- Quota -->
-                                <div>
-                                    <label class="text-sm font-semibold">Kuota Peserta *</label>
-                                    <input type="number" name="quota" min="1" required
-                                           class="w-full px-4 py-3 border rounded-lg">
-                                </div>
-
-                                <!-- Price -->
-                                <div>
-                                    <label class="text-sm font-semibold">Biaya *</label>
-                                    <input type="number" name="price" min="0" required
-                                           class="w-full px-4 py-3 border rounded-lg"
-                                           placeholder="0 untuk gratis">
-                                </div>
-
-                                <!-- Deadline -->
-                                <div>
-                                    <label class="text-sm font-semibold">Batas Pendaftaran *</label>
-                                    <input type="datetime-local" name="registration_deadline" required
-                                           class="w-full px-4 py-3 border rounded-lg">
-                                </div>
-
-                                <!-- Point Reward -->
-                                <div>
-                                    <label class="text-sm font-semibold">Point Reward</label>
-                                    <input type="number" name="points_reward" required
-                                           class="w-full px-4 py-3 border rounded-lg">
-                                </div>
-
-                                <!-- Certificate -->
-                                <div class="flex items-center space-x-3">
-                                    <input type="checkbox" name="certificate_available" value="1" class="w-5 h-5">
-                                    <span class="text-sm font-semibold">Sediakan Sertifikat</span>
+                                    <label class="block text-sm font-semibold text-abyss">Poster *</label>
+                                    <input type="file" name="image" required
+                                        class="w-full border border-veil rounded-lg p-3">
                                 </div>
 
                             </div>
                         </div>
 
-                        <!-- ====================== ADDITIONAL INFO ======================= -->
-                        <div class="bg-white rounded-xl shadow-sm p-6">
-                            <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
-                                <i class="fas fa-plus-circle text-orange-600 mr-3"></i> Informasi Tambahan
-                            </h2>
+                        <!-- SCHEDULE -->
+                        <div class="bg-white rounded-xl shadow p-6">
+                            {!! sectionHeader('Jadwal & Lokasi') !!}
 
-                             <div>
-                                    <label class="text-sm font-semibold">Tujuan Event</label>
-                                    <textarea name="objectives" rows="4"
-                                              class="w-full px-4 py-3 border rounded-lg"></textarea>
-                                </div>
-
-                            <div class="space-y-5">
-                                <div>
-                                    <label class="text-sm font-semibold">Persyaratan</label>
-                                    <textarea name="requirements" rows="4"
-                                              class="w-full px-4 py-3 border rounded-lg"></textarea>
-                                </div>
-
-                                <div>
-                                    <label class="text-sm font-semibold">Pembicara / Instruktur</label>
-                                    <input type="text" name="instructor_info"
-                                           class="w-full px-4 py-3 border rounded-lg">
-                                </div>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <input type="date" name="start_date"
+                                    class="w-full px-4 py-3 border border-veil rounded-lg">
+                                <input type="date" name="end_date"
+                                    class="w-full px-4 py-3 border border-veil rounded-lg">
                             </div>
+
+                            <div class="mt-4">
+                                <input type="text" name="location"
+                                    class="w-full px-4 py-3 border border-veil rounded-lg"
+                                    placeholder="Lokasi">
+                            </div>
+
+                            <div class="mt-4">
+                                <input type="url" name="meeting_link"
+                                    class="w-full px-4 py-3 border border-veil rounded-lg"
+                                    placeholder="Link Meeting (opsional)">
+                            </div>
+                        </div>
+
+                        <!-- REGISTRATION -->
+                        <div class="bg-white rounded-xl shadow p-6">
+                            {!! sectionHeader('Detail Pendaftaran') !!}
+
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <input type="number" name="quota" placeholder="Kuota"
+                                    class="w-full px-4 py-3 border border-veil rounded-lg">
+                                <input type="number" name="price" placeholder="Harga (0 = Gratis)"
+                                    class="w-full px-4 py-3 border border-veil rounded-lg">
+                                <input type="datetime-local" name="registration_deadline"
+                                    class="w-full px-4 py-3 border border-veil rounded-lg">
+                                <input type="number" name="points_reward" placeholder="Point Reward"
+                                    class="w-full px-4 py-3 border border-veil rounded-lg">
+                            </div>
+
+                            <label class="flex items-center mt-4 space-x-3">
+                                <input type="checkbox" name="certificate_available" value="1">
+                                <span class="text-sm font-semibold text-abyss">Sediakan Sertifikat</span>
+                            </label>
+                        </div>
+
+                        <!-- ADDITIONAL -->
+                        <div class="bg-white rounded-xl shadow p-6">
+                            {!! sectionHeader('Informasi Tambahan') !!}
+
+                            <textarea name="objectives" rows="3"
+                                class="w-full px-4 py-3 border border-veil rounded-lg mb-4"
+                                placeholder="Tujuan Pembelajaran"></textarea>
+
+                            <textarea name="requirements" rows="3"
+                                class="w-full px-4 py-3 border border-veil rounded-lg mb-4"
+                                placeholder="Persyaratan"></textarea>
+
+                            <input type="text" name="instructor_info"
+                                class="w-full px-4 py-3 border border-veil rounded-lg"
+                                placeholder="Pembicara / Instruktur">
                         </div>
                     </div>
 
-                    <!-- ====================== SIDEBAR ======================= -->
+                    <!-- SIDEBAR -->
                     <div class="lg:col-span-1">
-                        <div class="sticky top-24 space-y-6">
-
-                            <!-- Action Buttons -->
-                            <div class="bg-white rounded-xl shadow-sm p-6">
-                                <button type="submit" name="status" value="published"
-                                        class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold mb-3">
-                                    Publikasikan Kegiatan
-                                </button>
-
-                                <button type="submit" name="status" value="draft"
-                                        class="w-full border-2 border-gray-300 py-3 rounded-lg font-semibold">
-                                    Simpan sebagai Draft
-                                </button>
-                            </div>
-
+                        <div class="sticky top-24 bg-white rounded-xl shadow p-6 space-y-3">
+                            <button type="submit" name="status" value="published"
+                                class="w-full bg-current hover:bg-abyss text-white py-3 rounded-lg font-semibold transition">
+                                Publikasikan Kegiatan
+                            </button>
+                            <button type="submit" name="status" value="draft"
+                                class="w-full bg-mist hover:bg-frost text-white py-3 rounded-lg font-semibold transition">
+                                Simpan sebagai Draft
+                            </button>
+                            <button type="button" onclick="window.location='{{ route('dashboard') }}'"
+                                class="w-full border border-current text-current py-3 rounded-lg font-semibold hover:bg-veil transition">
+                                Kembali ke Menu Dashboard
+                            </button>
                         </div>
                     </div>
 
                 </div>
-
             </form>
 
         </div>

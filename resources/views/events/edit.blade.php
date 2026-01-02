@@ -1,17 +1,13 @@
 <x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            Edit Kegiatan: {{ $event->title }}
+        </h2>
+        <p class="text-gray-600 mt-1">Perbarui informasi kegiatan Anda di bawah ini.</p>
+    </x-slot>
 
-<!-- Header -->
-<x-slot name="header">
-    <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-        Edit Kegiatan: {{ $event->title }}
-    </h2>
-    <p class="text-gray-600 mt-1">Perbarui informasi kegiatan Anda di bawah ini.</p>
-</x-slot>
-
-    <div class="min-h-screen bg-gray-50 py-8">
+    <div class="min-h-screen bg-veil py-8">
         <div class="container mx-auto px-4">
-
-            <!-- FORM UPDATE -->
             <form action="{{ route('events.update', $event->slug) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
@@ -193,7 +189,7 @@
                             <div class="space-y-4">
 
                                 <div>
-                                    <label class="text-sm font-semibold">Tujuan Event</label>
+                                    <label class="text-sm font-semibold">Tujuan Pembelajaran</label>
                                     <textarea name="objectives" rows="4"
                                               class="w-full px-4 py-3 border rounded-lg">{{ $event->objectives }}</textarea>
                                 </div>
@@ -220,22 +216,23 @@
                         <div class="bg-white rounded-xl shadow-sm p-6 sticky top-24 space-y-4">
 
                             <button type="submit" name="status" value="published"
-                                    class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold">
+                                    class="w-full bg-current hover:bg-abyss text-white py-3 rounded-lg font-semibold transition">
                                 Simpan & Publikasikan
                             </button>
 
                             <button type="submit" name="status" value="draft"
-                                    class="w-full border border-gray-300 py-3 rounded-lg font-semibold">
+                                    class="w-full bg-mist hover:bg-frost text-white py-3 rounded-lg font-semibold transition">
                                 Simpan sebagai Draft
                             </button>
 
+                            <button type="button" onclick="window.location='{{ route('dashboard') }}'"
+                                class="w-full border border-current text-current py-3 rounded-lg font-semibold hover:bg-veil transition">
+                                Kembali ke Menu Dashboard
+                            </button>
                         </div>
                     </div>
-
                 </div>
-
             </form>
-
         </div>
     </div>
 
@@ -254,5 +251,3 @@
             }
         });
     </script>
-
-</x-app-layout>
