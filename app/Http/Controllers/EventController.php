@@ -22,7 +22,10 @@ class EventController extends Controller
             ->latest()
             ->paginate(9);
 
-        return view('events.index', compact('events'));
+        $categories = Category::all();
+        $eventTypes = EventType::all();
+
+        return view('events.index', compact('events', 'categories', 'eventTypes'));
     }
 
     /**
