@@ -122,7 +122,7 @@
                                 </span>
                             </div>
                         </div>
-                        <a href="{{ route('events.show', $event->slug) }}" class="flex-shrink-0 text-indigo-600 hover:text-indigo-700">
+                        <a href="{{ route('admin.events.show', $event->id) }}" class="flex-shrink-0 text-indigo-600 hover:text-indigo-700">
                             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                             </svg>
@@ -143,7 +143,8 @@
         <div class="bg-white rounded-2xl shadow-sm p-6">
             <div class="flex items-center justify-between mb-6">
                 <h2 class="text-xl font-bold text-gray-900">Recent Registrations</h2>
-                <a href="#" class="text-sm text-indigo-600 hover:text-indigo-700 font-medium">View All →</a>
+              <a href="{{ route('admin.events.index') }}" class="text-sm text-indigo-600 hover:text-indigo-700 font-medium"> View All →</a>
+
             </div>
             
             <div class="space-y-4">

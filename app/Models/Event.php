@@ -5,12 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
-    class Event extends Model
-    {
-        use HasFactory, SoftDeletes;
+class Event extends Model
+{
+    use HasFactory, SoftDeletes;
 
-        protected $fillable = [
+    protected $fillable = [
         'user_id',
         'category_id',
         'event_type_id',
@@ -23,6 +25,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
         'venue_type',
         'price',
         'quota',
+        'registered_count',
         'start_date',
         'end_date',
         'registration_deadline',
@@ -37,51 +40,44 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
     protected $casts = [
         'price' => 'decimal:2',
-        'gallery' => 'array',
+        'quota' => 'integer',
+        'registered_count' => 'integer',
         'start_date' => 'datetime',
         'end_date' => 'datetime',
         'registration_deadline' => 'datetime',
         'is_featured' => 'boolean',
         'certificate_available' => 'boolean',
+        'gallery' => 'array',
     ];
 
-    // Relationships
-    public function user()
+    /**
+     * Organizer / pembuat event
+     */
+    public function organizer(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function category()
+    /**
+     * Alias (biar kalau di kode lama masih pakai $event->user tidak error)
+     * Ini opsional, tapi aman kalau kamu sudah terlanjur pakai user() di banyak tempat.
+     */
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(Category::class);
+        return $this->organizer();
     }
 
-    public function eventType()
+    /**
+     * Registrations / pendaftar event
+     */
+    public function registrations(): HasMany
     {
-        return $this->belongsTo(EventType::class);
+        return $this->hasMany(Registration::class, 'event_id');
     }
 
-    public function schedules()
-    {
-        return $this->hasMany(EventSchedule::class);
-    }
-
-    public function materials()
-    {
-        return $this->hasMany(EventMaterial::class);
-    }
-
-    public function registrations()
-    {
-        return $this->hasMany(Registration::class);
-    }
-
-    public function certificates()
-    {
-        return $this->hasMany(Certificate::class);
-    }
-
-    // Scopes
+    /**
+     * Scope: event yang published
+     */
     public function scopePublished($query)
     {
         return $query->where('status', 'published');
@@ -137,7 +133,4 @@ use Illuminate\Database\Eloquent\SoftDeletes;
     {
         return 'slug';
     }
-
- 
-
 }

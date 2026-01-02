@@ -6,18 +6,11 @@ use App\Models\Event;
 use App\Models\Registration;
 use App\Models\Transaction;
 use App\Models\User;
-use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
     /**
-     * Display dashboard based on user role
-     * Route: GET /dashboard
+     * Dashboard umum: redirect sesuai role
      */
     public function index(Request $request)
     {
@@ -34,38 +27,25 @@ class DashboardController extends Controller
 
 
     /**
-     * Admin dashboard route handler
-     * Route: GET /admin/dashboard
+     * Admin Dashboard view: resources/views/dashboard/admin.blade.php
      */
     public function admin()
     {
-        // biar konsisten, /admin/dashboard tampilannya sama dengan adminDashboard()
-        return $this->adminDashboard();
-    }
-
-    /**
-     * ADMIN DASHBOARD
-     */
-    protected function adminDashboard()
-    {
         $stats = [
-            'total_users'         => User::count(),
-            'total_events'        => Event::count(),
+            'total_users' => User::count(),
+            'total_events' => Event::count(),
             'total_registrations' => Registration::count(),
-            // aman: kalau scope paid() belum ada, fallback ke where('status','paid')
-            'total_revenue'       => method_exists(Transaction::class, 'scopePaid')
-                ? Transaction::paid()->sum('amount')
-                : Transaction::where('status', 'paid')->sum('amount'),
+            'total_revenue' => (float) Transaction::paid()->sum('amount'),
         ];
 
         $recentEvents = Event::with('user')
             ->latest()
-            ->limit(5)
+            ->take(5)
             ->get();
 
         $recentRegistrations = Registration::with(['user', 'event'])
             ->latest()
-            ->limit(10)
+            ->take(5)
             ->get();
 
         return view('dashboard.admin', compact('stats', 'recentEvents', 'recentRegistrations'));

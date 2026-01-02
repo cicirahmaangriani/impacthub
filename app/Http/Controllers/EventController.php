@@ -1,51 +1,28 @@
 <?php
 
-// app/Http/Controllers/EventController.php
 namespace App\Http\Controllers;
 
 use App\Models\Event;
 use App\Models\Category;
 use App\Models\EventType;
-use App\Services\EventService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 
-
 class EventController extends Controller
 {
-    protected $eventService;
-
-    public function __construct(EventService $eventService)
-    {
-        $this->eventService = $eventService;
-        $this->middleware('auth')->except(['index', 'show']);
-    }
-
-    /**
-     * Display a listing of events
-     */
     public function index(Request $request)
     {
-        $filters = $request->only([
-            'category_id',
-            'event_type_id',
-            'price_min',
-            'price_max',
-            'venue_type',
-            'search',
-            'featured',
-            'status',
-            'sort_by',
-            'sort_order',
-            'per_page'
-        ]);
+        $events = Event::query()
+            ->when($request->filled('q'), function ($query) use ($request) {
+                $query->where('title', 'like', '%' . $request->q . '%');
+            })
+            // kalau mau public cuma published, aktifkan ini:
+            // ->where('status', 'published')
+            ->latest()
+            ->paginate(9);
 
-        $events = $this->eventService->getPublishedEvents($filters);
-        $categories = Category::active()->get();
-        $eventTypes = EventType::all();
-
-        return view('events.index', compact('events', 'categories', 'eventTypes'));
+        return view('events.index', compact('events'));
     }
 
     /**
