@@ -6,18 +6,18 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {{-- Hero Section --}}
-        <div class="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl shadow-xl p-8 md:p-12 mb-8 text-white">
+        <div class="glass-card rounded-2xl p-8 md:p-12 mb-8 text-white transform transition-all duration-300 hover:shadow-2xl" style="background: linear-gradient(135deg, #00385a 0%, #6a90b4 100%); box-shadow: 0 8px 32px rgba(1, 22, 43, 0.3);">
             <div class="max-w-3xl">
                 <h1 class="text-4xl md:text-5xl font-bold mb-4">
-                    Temukan Peluang <span class="text-yellow-300">Berkembang</span> Bersama Kami
+                    Temukan Peluang <span style="color: #d2dbcb; font-weight: 800;">Berkembang</span> Bersama Kami
                 </h1>
-                <p class="text-lg md:text-xl text-indigo-100 mb-6">
+                <p class="text-lg md:text-xl mb-6" style="color: #d2dbcb;">
                     Ikuti ratusan event, bootcamp, dan kegiatan sosial yang mengembangkan skill dan memperluas jaringan/ koneksi anda
                 </p>
 
                 <div class="flex flex-wrap gap-4">
                     <a href="#events" 
-                        class="inline-flex items-center px-6 py-3 bg-white text-indigo-600 font-semibold rounded-lg hover:bg-indigo-50 transition">
+                        class="inline-flex items-center px-6 py-3 bg-white font-semibold rounded-lg transition-all duration-300 shadow-lg hover:shadow-2xl transform hover:-translate-y-1" style="color: #00385a;">
                         Jelajah Event
                         <svg class="ml-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
@@ -28,8 +28,8 @@
                     @auth
                         @if(auth()->user()->isOrganizer())
                             <a href="{{ route('events.create') }}"
-                                class="inline-flex items-center px-6 py-3 bg-indigo-500 text-white font-semibold rounded-lg 
-                                       hover:bg-indigo-400 transition border-2 border-white">
+                                class="inline-flex items-center px-6 py-3 text-white font-semibold rounded-lg 
+                                       hover:shadow-lg transition border-2 border-white" style="background: rgba(106, 144, 180, 0.8);">
                                 Buat Event
                             </a>
                         @endif
@@ -40,21 +40,21 @@
 
 
         {{-- ======================= FILTER SECTION ======================= --}}
-        <div id="events" class="bg-white rounded-lg shadow-sm p-6 mb-6">
+        <div id="events" class="glass-card rounded-2xl p-6 mb-6 transform transition-all duration-300 hover:shadow-2xl">
             <form action="{{ route('events.index') }}" method="GET">
 
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                     {{-- Search --}}
                     <div class="md:col-span-2">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Cari Event</label>
+                        <label class="block text-sm font-medium mb-1" style="color: #00385a;">Cari Event</label>
                         <input type="text" name="search" value="{{ request('search') }}"
                                placeholder="Cari judul event..."
-                               class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
+                               class="w-full rounded-lg border-gray-300" style="border-color: #d2dbcb; focus:border-color: #00385a;">
                     </div>
 
                     {{-- Category --}}
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Kategori</label>
+                        <label class="block text-sm font-medium mb-1" style="color: #00385a;">Kategori</label>
                         <select name="category_id" class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
                             <option value="">Semua Kategori</option>
                             @foreach($categories as $category)
@@ -68,7 +68,7 @@
 
                     {{-- Event Type --}}
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Tipe Event</label>
+                        <label class="block text-sm font-medium mb-1" style="color: #00385a;">Tipe Event</label>
                         <select name="event_type_id" class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
                             <option value="">Semua Tipe</option>
                             @foreach($eventTypes as $type)
@@ -86,7 +86,7 @@
 
                     {{-- Venue Type --}}
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Lokasi</label>
+                        <label class="block text-sm font-medium mb-1" style="color: #00385a;">Lokasi</label>
                         <select name="venue_type" class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
                             <option value="">Semua Lokasi</option>
                             <option value="online"  {{ request('venue_type') == 'online' ? 'selected' : '' }}>Online</option>
@@ -97,7 +97,7 @@
 
                     {{-- Price --}}
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Harga</label>
+                        <label class="block text-sm font-medium mb-1" style="color: #00385a;">Harga</label>
                         <select name="price_filter" class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
                             <option value="">Semua Harga</option>
                             <option value="free" {{ request('price_filter') == 'free' ? 'selected' : '' }}>Gratis</option>

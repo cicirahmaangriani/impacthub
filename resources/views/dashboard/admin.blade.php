@@ -1,20 +1,20 @@
 <x-app-layout>
 
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     
     <!-- Header -->
-    <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-        <p class="text-gray-600 mt-2">Selamat datang, {{ auth()->user()->name }}! 👋</p>
+    <div class="mb-8 animate-fade-in-up">
+        <h1 class="text-4xl font-bold gradient-text">Admin Dashboard</h1>
+        <p class="mt-2 text-lg" style="color: #00385a;">Selamat datang, {{ auth()->user()->name }}! 👋</p>
     </div>
 
     <!-- Stats Cards -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <!-- Total Users -->
-        <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl shadow-xl p-6 text-white">
+        <div class="glass-card rounded-2xl p-6 text-white transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl" style="background: linear-gradient(135deg, #00385a 0%, #01162b 100%); box-shadow: 0 8px 32px rgba(1, 22, 43, 0.3);">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-blue-100 text-sm font-medium">Total Users</p>
+                    <p class="text-sm font-medium" style="color: #d2dbcb;">Total Users</p>
                     <h3 class="text-3xl font-bold mt-2">{{ $stats['total_users'] }}</h3>
                     <p class="text-blue-100 text-xs mt-2">
                         <span class="font-semibold">{{ \App\Models\User::organizers()->count() }}</span> Organizers, 
@@ -30,10 +30,10 @@
         </div>
 
         <!-- Total Events -->
-        <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl shadow-xl p-6 text-white">
+        <div class="glass-card rounded-2xl p-6 text-white transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl" style="background: linear-gradient(135deg, #6a90b4 0%, #00385a 100%); box-shadow: 0 8px 32px rgba(1, 22, 43, 0.3);">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-purple-100 text-sm font-medium">Total Events</p>
+                    <p class="text-sm font-medium" style="color: #d2dbcb;">Total Events</p>
                     <h3 class="text-3xl font-bold mt-2">{{ $stats['total_events'] }}</h3>
                     <p class="text-purple-100 text-xs mt-2">
                         <span class="font-semibold">{{ \App\Models\Event::published()->count() }}</span> Published
@@ -48,10 +48,10 @@
         </div>
 
         <!-- Total Registrations -->
-        <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-2xl shadow-xl p-6 text-white">
+        <div class="glass-card rounded-2xl p-6 text-white transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl" style="background: linear-gradient(135deg, #94a2bf 0%, #6a90b4 100%); box-shadow: 0 8px 32px rgba(1, 22, 43, 0.3);">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-green-100 text-sm font-medium">Total Registrations</p>
+                    <p class="text-sm font-medium" style="color: #ffffff;">Total Registrations</p>
                     <h3 class="text-3xl font-bold mt-2">{{ $stats['total_registrations'] }}</h3>
                     <p class="text-green-100 text-xs mt-2">
                         <span class="font-semibold">{{ \App\Models\Registration::confirmed()->count() }}</span> Confirmed
@@ -90,10 +90,10 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         
         <!-- Recent Events -->
-        <div class="bg-white rounded-2xl shadow-sm p-6">
+        <div class="glass-card rounded-2xl p-6 transform transition-all duration-300 hover:shadow-2xl">
             <div class="flex items-center justify-between mb-6">
-                <h2 class="text-xl font-bold text-gray-900">Recent Events</h2>
-                <a href="{{ route('admin.events.index') }}" class="text-sm text-indigo-600 hover:text-indigo-700 font-medium">View All →</a>
+                <h2 class="text-xl font-bold gradient-text">Recent Events</h2>
+                <a href="{{ route('admin.events.index') }}" class="text-sm font-medium transition-all duration-300" style="color: #00385a;" onmouseover="this.style.color='#6a90b4'" onmouseout="this.style.color='#00385a'">View All →</a>
             </div>
             
             <div class="space-y-4">
@@ -103,7 +103,7 @@
                             @if($event->image)
                                 <img src="{{ asset('storage/' . $event->image) }}" class="h-16 w-16 rounded-lg object-cover" alt="{{ $event->title }}">
                             @else
-                                <div class="h-16 w-16 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                                <div class="h-16 w-16 rounded-lg flex items-center justify-center" style="background: linear-gradient(to bottom right, #00385a, #6a90b4);">
                                     <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                     </svg>

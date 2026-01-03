@@ -4,19 +4,19 @@
     
     <!-- Alert Messages -->
     @if(session('success'))
-        <div class="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">
+        <div class="mb-6 p-4 rounded-lg border transform transition-all duration-300" style="background: rgba(34, 197, 94, 0.1); backdrop-filter: blur(10px); border-color: rgba(34, 197, 94, 0.3); color: #166534;">
             {{ session('success') }}
         </div>
     @endif
     
     @if(session('error'))
-        <div class="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+        <div class="mb-6 p-4 rounded-lg border transform transition-all duration-300" style="background: rgba(239, 68, 68, 0.1); backdrop-filter: blur(10px); border-color: rgba(239, 68, 68, 0.3); color: #991b1b;">
             {{ session('error') }}
         </div>
     @endif
     
     @if($errors->any())
-        <div class="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+        <div class="mb-6 p-4 rounded-lg border transform transition-all duration-300" style="background: rgba(239, 68, 68, 0.1); backdrop-filter: blur(10px); border-color: rgba(239, 68, 68, 0.3); color: #991b1b;">
             <ul class="list-disc list-inside">
                 @foreach($errors->all() as $error)
                     <li>{{ $error }}</li>
@@ -29,16 +29,16 @@
     <nav class="flex mb-6" aria-label="Breadcrumb">
         <ol class="inline-flex items-center space-x-1 md:space-x-3">
             <li class="inline-flex items-center">
-                <a href="{{ route('events.index') }}" class="text-gray-600 hover:text-gray-900">
+                <a href="{{ route('events.index') }}" class="transition-all duration-300" style="color: #00385a;" onmouseover="this.style.color='#6a90b4'" onmouseout="this.style.color='#00385a'">
                     Events
                 </a>
             </li>
             <li>
                 <div class="flex items-center">
-                    <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                    <svg class="w-6 h-6" style="color: #94a2bf;" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
                     </svg>
-                    <span class="ml-1 text-gray-500">{{ $event->title }}</span>
+                    <span class="ml-1" style="color: #6a90b4;">{{ $event->title }}</span>
                 </div>
             </li>
         </ol>
@@ -50,9 +50,9 @@
         <div class="lg:col-span-2">
 
             {{-- Image --}}
-            <div class="relative h-96 rounded-2xl overflow-hidden bg-gradient-to-br from-indigo-500 to-purple-600 mb-6 shadow-xl">
+            <div class="relative h-96 rounded-2xl overflow-hidden mb-6 shadow-xl transform transition-all duration-500 hover:shadow-2xl hover:scale-[1.02]" style="background: linear-gradient(to bottom right, #00385a, #6a90b4);">
                 @if($event->image)
-                    <img src="{{ asset('storage/' . $event->image) }}" alt="{{ $event->title }}" class="w-full h-full object-cover">
+                    <img src="{{ asset('storage/' . $event->image) }}" alt="{{ $event->title }}" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
                 @else
                     <div class="flex items-center justify-center h-full text-white">
                         <svg class="h-32 w-32 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -74,10 +74,10 @@
             </div>
 
             {{-- Title & Meta --}}
-            <div class="bg-white rounded-2xl shadow-sm p-6 mb-6">
+            <div class="glass-card rounded-2xl p-6 mb-6 transform transition-all duration-300 hover:shadow-2xl">
                 <div class="flex flex-wrap gap-2 mb-4">
                     @if($event->eventType)
-                        <span class="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-medium">
+                        <span class="px-3 py-1 rounded-full text-sm font-medium text-white transition-all duration-300 hover:shadow-lg" style="background: #6a90b4;">
                             {{ $event->eventType->name }}
                         </span>
                     @endif
@@ -100,7 +100,7 @@
                     @endif
                 </div>
 
-                <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{{ $event->title }}</h1>
+                <h1 class="text-3xl md:text-4xl font-bold mb-4 gradient-text">{{ $event->title }}</h1>
 
                 {{-- Organizer --}}
                 @if($event->user)
@@ -116,52 +116,52 @@
                 {{-- Stats --}}
                 <div class="grid grid-cols-3 gap-4 pt-4 border-t">
                     <div class="text-center">
-                        <div class="text-2xl font-bold text-indigo-600">{{ $event->registered_count ?? 0 }}</div>
-                        <div class="text-xs text-gray-600">Peserta</div>
+                        <div class="text-2xl font-bold" style="color: #00385a;">{{ $event->registered_count ?? 0 }}</div>
+                        <div class="text-xs" style="color: #6a90b4;">Peserta</div>
                     </div>
                     <div class="text-center">
-                        <div class="text-2xl font-bold text-green-600">{{ $event->available_slots ?? 0 }}</div>
-                        <div class="text-xs text-gray-600">Slot Tersisa</div>
+                        <div class="text-2xl font-bold" style="color: #6a90b4;">{{ $event->available_slots ?? 0 }}</div>
+                        <div class="text-xs" style="color: #6a90b4;">Slot Tersisa</div>
                     </div>
                     @if(($event->points_reward ?? 0) > 0)
                         <div class="text-center">
-                            <div class="text-2xl font-bold text-amber-600">+{{ $event->points_reward }}</div>
-                            <div class="text-xs text-gray-600">Poin Reward</div>
+                            <div class="text-2xl font-bold" style="color: #94a2bf;">+{{ $event->points_reward }}</div>
+                            <div class="text-xs" style="color: #6a90b4;">Poin Reward</div>
                         </div>
                     @endif
                 </div>
             </div>
 
             {{-- Description --}}
-            <div class="bg-white rounded-2xl shadow-sm p-6 mb-6">
-                <h2 class="text-xl font-bold text-gray-900 mb-4">Deskripsi</h2>
-                <div class="prose prose-indigo max-w-none">
+            <div class="glass-card rounded-2xl p-6 mb-6 transform transition-all duration-300 hover:shadow-2xl">
+                <h2 class="text-xl font-bold mb-4 gradient-text">📖 Deskripsi</h2>
+                <div class="prose prose-indigo max-w-none" style="color: #00385a;">
                     {!! nl2br(e($event->description)) !!}
                 </div>
             </div>
 
             @if($event->objectives)
-                <div class="bg-white rounded-2xl shadow-sm p-6 mb-6">
-                    <h2 class="text-xl font-bold text-gray-900 mb-4">🎯 Tujuan Pembelajaran</h2>
-                    <div class="prose prose-indigo max-w-none text-gray-700">
+                <div class="glass-card rounded-2xl p-6 mb-6 transform transition-all duration-300 hover:shadow-2xl">
+                    <h2 class="text-xl font-bold mb-4 gradient-text">🎯 Tujuan Pembelajaran</h2>
+                    <div class="prose prose-indigo max-w-none" style="color: #00385a;">
                         {!! nl2br(e($event->objectives)) !!}
                     </div>
                 </div>
             @endif
 
             @if($event->requirements)
-                <div class="bg-white rounded-2xl shadow-sm p-6 mb-6">
-                    <h2 class="text-xl font-bold text-gray-900 mb-4">📋 Persyaratan</h2>
-                    <div class="prose prose-indigo max-w-none text-gray-700">
+                <div class="glass-card rounded-2xl p-6 mb-6 transform transition-all duration-300 hover:shadow-2xl">
+                    <h2 class="text-xl font-bold mb-4 gradient-text">📋 Persyaratan</h2>
+                    <div class="prose prose-indigo max-w-none" style="color: #00385a;">
                         {!! nl2br(e($event->requirements)) !!}
                     </div>
                 </div>
             @endif
 
             @if($event->instructor_info)
-                <div class="bg-white rounded-2xl shadow-sm p-6 mb-6">
-                    <h2 class="text-xl font-bold text-gray-900 mb-4">👨‍🏫 Instruktur</h2>
-                    <div class="text-gray-700">
+                <div class="glass-card rounded-2xl p-6 mb-6 transform transition-all duration-300 hover:shadow-2xl">
+                    <h2 class="text-xl font-bold mb-4 gradient-text">👨‍🏫 Instruktur</h2>
+                    <div style="color: #00385a;">
                         {!! nl2br(e($event->instructor_info)) !!}
                     </div>
                 </div>
@@ -171,15 +171,15 @@
 
         {{-- Sidebar --}}
         <div class="lg:col-span-1">
-            <div class="bg-white rounded-2xl shadow-xl p-6 sticky top-20">
+            <div class="glass-card rounded-2xl p-6 sticky top-20 transform transition-all duration-300 hover:shadow-2xl">
 
                 {{-- Price --}}
                 <div class="text-center mb-6">
                     @if(method_exists($event, 'isFree') && $event->isFree())
-                        <div class="text-4xl font-bold text-green-600">GRATIS</div>
+                        <div class="text-4xl font-bold" style="color: #6a90b4;">GRATIS</div>
                     @else
-                        <div class="text-sm text-gray-600 mb-1">Harga</div>
-                        <div class="text-4xl font-bold text-indigo-600">
+                        <div class="text-sm mb-1" style="color: #00385a;">Harga</div>
+                        <div class="text-4xl font-bold gradient-text">
                             Rp {{ number_format($event->price ?? 0, 0, ',', '.') }}
                         </div>
                     @endif
@@ -254,12 +254,12 @@
                     {{-- ✅ ADMIN: hanya monitoring + lihat registrasi --}}
                     @if($isAdmin)
                         <div class="space-y-3">
-                            <div class="p-4 rounded-lg bg-gray-50 border border-gray-200 text-sm text-gray-600">
+                            <div class="p-4 rounded-lg border text-sm transform transition-all duration-300" style="background: rgba(148, 162, 191, 0.1); backdrop-filter: blur(10px); border-color: rgba(148, 162, 191, 0.3); color: #00385a;">
                                 🔒 Anda login sebagai <span class="font-semibold">Admin</span>. Anda hanya bisa monitoring data event.
                             </div>
 
                             <a href="{{ route('registrations.index', ['event' => $event->slug]) }}"
-                               class="block w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white text-center font-semibold rounded-lg transition">
+                               class="block w-full py-3 px-4 text-white text-center font-semibold rounded-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl" style="background: linear-gradient(135deg, #00385a 0%, #6a90b4 100%);">
                                 📋 Lihat Registrasi
                             </a>
                         </div>
@@ -268,7 +268,7 @@
                     @elseif($isOrganizer && $isOwner)
                         <div class="space-y-3">
                             <a href="{{ route('events.edit', $event) }}"
-                               class="block w-full py-3 px-4 bg-amber-500 hover:bg-amber-600 text-white text-center font-semibold rounded-lg transition">
+                               class="block w-full py-3 px-4 text-white text-center font-semibold rounded-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl" style="background-color: #6a90b4;">
                                 ✏️ Edit Event
                             </a>
 
@@ -277,35 +277,35 @@
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit"
-                                    class="w-full py-3 px-4 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition">
+                                    class="w-full py-3 px-4 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl">
                                     🗑️ Hapus Event
                                 </button>
                             </form>
 
                             <a href="{{ route('registrations.index', ['event' => $event->slug]) }}"
-                               class="block w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white text-center font-semibold rounded-lg transition">
+                               class="block w-full py-3 px-4 text-white text-center font-semibold rounded-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl" style="background: linear-gradient(135deg, #00385a 0%, #6a90b4 100%);">
                                 📋 Lihat Registrasi
                             </a>
                         </div>
 
                     {{-- ORGANIZER bukan owner --}}
                     @elseif($isOrganizer && !$isOwner)
-                        <div class="p-4 rounded-lg bg-gray-50 border border-gray-200 text-sm text-gray-600">
+                        <div class="p-4 rounded-lg border text-sm transform transition-all duration-300" style="background: rgba(148, 162, 191, 0.1); backdrop-filter: blur(10px); border-color: rgba(148, 162, 191, 0.3); color: #00385a;">
                             ℹ️ Anda login sebagai <span class="font-semibold">Organizer</span>, tapi ini bukan event milik Anda.
                         </div>
 
                     {{-- PARTICIPANT --}}
                     @elseif($isParticipant)
                         @if($alreadyRegistered)
-                            <button disabled class="w-full py-3 px-4 bg-gray-300 text-gray-600 font-semibold rounded-lg cursor-not-allowed">
+                            <button disabled class="w-full py-3 px-4 bg-gray-300 text-gray-600 font-semibold rounded-lg cursor-not-allowed transform transition-all duration-300">
                                 ✅ Sudah Terdaftar
                             </button>
                         @elseif($isFull)
-                            <button disabled class="w-full py-3 px-4 bg-gray-300 text-gray-600 font-semibold rounded-lg cursor-not-allowed">
+                            <button disabled class="w-full py-3 px-4 bg-gray-300 text-gray-600 font-semibold rounded-lg cursor-not-allowed transform transition-all duration-300">
                                 🚫 Kuota Penuh
                             </button>
                         @else
-                            <button @click="openModal = true" type="button" class="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg transition shadow-lg hover:shadow-xl">
+                            <button @click="openModal = true" type="button" class="w-full py-3 px-4 text-white font-semibold rounded-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-2xl" style="background: linear-gradient(135deg, #00385a 0%, #6a90b4 100%); box-shadow: 0 4px 20px rgba(0, 56, 90, 0.3);">
                                 🎯 Daftar Sekarang
                             </button>
                         @endif
@@ -317,7 +317,7 @@
                     @endif
 
                 @else
-                    <a href="{{ route('login') }}" class="block w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white text-center font-semibold rounded-lg transition shadow-lg hover:shadow-xl">
+                    <a href="{{ route('login') }}" class="block w-full py-3 px-4 text-white text-center font-semibold rounded-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-2xl" style="background: linear-gradient(135deg, #00385a 0%, #6a90b4 100%); box-shadow: 0 4px 20px rgba(0, 56, 90, 0.3);">
                         Login untuk Mendaftar
                     </a>
                 @endauth
@@ -339,7 +339,7 @@
                          x-transition:leave-start="opacity-100" 
                          x-transition:leave-end="opacity-0" 
                          @click="openModal = false"
-                         class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+                         class="fixed inset-0 transition-opacity" style="background: rgba(1, 22, 43, 0.75); backdrop-filter: blur(10px);"></div>
 
                     <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
 
@@ -350,11 +350,11 @@
                          x-transition:leave="ease-in duration-200" 
                          x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" 
                          x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                         class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full p-6">
+                         class="inline-block align-bottom rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full p-6" style="background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(20px); border: 1px solid rgba(0, 56, 90, 0.1);">
                         
                         <div class="flex justify-between items-center mb-4">
-                            <h3 class="text-xl font-bold text-gray-900">Formulir Pendaftaran</h3>
-                            <button @click="openModal = false" type="button" class="text-gray-400 hover:text-gray-600 transition">
+                            <h3 class="text-xl font-bold gradient-text">Formulir Pendaftaran</h3>
+                            <button @click="openModal = false" type="button" class="transition-all duration-300" style="color: #94a2bf;" onmouseover="this.style.color='#00385a'" onmouseout="this.style.color='#94a2bf'">
                                 <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                                 </svg>
@@ -366,33 +366,33 @@
                             <div class="space-y-4">
                                 <div class="grid grid-cols-2 gap-4">
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700">First Name</label>
-                                        <input type="text" name="first_name" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                        <label class="block text-sm font-medium" style="color: #00385a;">First Name</label>
+                                        <input type="text" name="first_name" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm transition-all duration-300" style="border-color: #d2dbcb;" onfocus="this.style.borderColor='#6a90b4'; this.style.boxShadow='0 0 0 3px rgba(106, 144, 180, 0.1)'" onblur="this.style.borderColor='#d2dbcb'; this.style.boxShadow=''">
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700">Last Name</label>
-                                        <input type="text" name="last_name" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                        <label class="block text-sm font-medium" style="color: #00385a;">Last Name</label>
+                                        <input type="text" name="last_name" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm transition-all duration-300" style="border-color: #d2dbcb;" onfocus="this.style.borderColor='#6a90b4'; this.style.boxShadow='0 0 0 3px rgba(106, 144, 180, 0.1)'" onblur="this.style.borderColor='#d2dbcb'; this.style.boxShadow=''">
                                     </div>
                                 </div>
 
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700">Phone Number</label>
-                                    <input type="tel" name="phone" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <label class="block text-sm font-medium" style="color: #00385a;">Phone Number</label>
+                                    <input type="tel" name="phone" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm transition-all duration-300" style="border-color: #d2dbcb;" onfocus="this.style.borderColor='#6a90b4'; this.style.boxShadow='0 0 0 3px rgba(106, 144, 180, 0.1)'" onblur="this.style.borderColor='#d2dbcb'; this.style.boxShadow=''">
                                 </div>
 
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700">Tanggal Lahir</label>
-                                    <input type="date" name="birth_date" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <label class="block text-sm font-medium" style="color: #00385a;">Tanggal Lahir</label>
+                                    <input type="date" name="birth_date" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm transition-all duration-300" style="border-color: #d2dbcb;" onfocus="this.style.borderColor='#6a90b4'; this.style.boxShadow='0 0 0 3px rgba(106, 144, 180, 0.1)'" onblur="this.style.borderColor='#d2dbcb'; this.style.boxShadow=''">
                                 </div>
 
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700">Address</label>
-                                    <textarea name="address" rows="3" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"></textarea>
+                                    <label class="block text-sm font-medium" style="color: #00385a;">Address</label>
+                                    <textarea name="address" rows="3" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm transition-all duration-300" style="border-color: #d2dbcb;" onfocus="this.style.borderColor='#6a90b4'; this.style.boxShadow='0 0 0 3px rgba(106, 144, 180, 0.1)'" onblur="this.style.borderColor='#d2dbcb'; this.style.boxShadow=''"></textarea>
                                 </div>
                             </div>
                             
                             <div class="mt-6">
-                                <button type="submit" class="w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-3 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm">
+                                <button type="submit" class="w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-3 text-base font-medium text-white transition-all duration-300 transform hover:-translate-y-1 hover:shadow-2xl sm:text-sm" style="background: linear-gradient(135deg, #00385a 0%, #6a90b4 100%);">
                                     Konfirmasi Pendaftaran
                                 </button>
                             </div>
@@ -408,7 +408,7 @@
     <!-- Related Events -->
     @if($relatedEvents->count() > 0)
         <div class="mt-12">
-            <h2 class="text-2xl font-bold text-gray-900 mb-6">Event Serupa</h2>
+            <h2 class="text-2xl font-bold mb-6 gradient-text">Event Serupa</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 @foreach($relatedEvents as $relatedEvent)
                     @include('events.partials.event-card', ['event' => $relatedEvent])

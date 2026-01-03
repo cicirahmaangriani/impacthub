@@ -1,7 +1,7 @@
-<div class="bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group">
+<div class="glass-card rounded-lg overflow-hidden transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl group">
     
     {{-- IMAGE --}}
-    <div class="relative h-48 overflow-hidden bg-gradient-to-br from-indigo-500 to-purple-600">
+    <div class="relative h-48 overflow-hidden" style="background: linear-gradient(135deg, #00385a 0%, #6a90b4 100%);">
         @if($event->image)
             <img src="{{ asset('storage/' . $event->image) }}" 
                  alt="{{ $event->title }}"
@@ -40,7 +40,7 @@
                     GRATIS
                 </span>
             @else
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-indigo-600 text-white">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold text-white" style="background: #00385a;">
                     Rp {{ number_format($event->price, 0, ',', '.') }}
                 </span>
             @endif
@@ -54,7 +54,7 @@
         {{-- Event Type & Venue --}}
         <div class="flex items-center space-x-2 mb-3">
             @if($event->eventType)
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium text-white" style="background: #6a90b4;">
                     {{ $event->eventType->name }}
                 </span>
             @endif
@@ -74,8 +74,8 @@
         </div>
 
         {{-- Title --}}
-        <h3 class="text-lg font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-indigo-600 transition">
-            <a href="{{ route('events.show', $event->slug) }}">
+        <h3 class="text-lg font-bold mb-2 line-clamp-2 group-hover:transition" style="color: #01162b;">
+            <a href="{{ route('events.show', $event->slug) }}" class="hover:" style="hover:color: #00385a;">
                 {{ $event->title }}
             </a>
         </h3>

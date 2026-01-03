@@ -6,18 +6,18 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     
     <!-- Header -->
-    <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-900">Welcome back, {{ optional(auth()->user())->name ?? 'User' }}! 👋</h1>
-        <p class="text-gray-600 mt-2">Track your learning journey and achievements</p>
+    <div class="mb-8 animate-fade-in-up">
+        <h1 class="text-4xl font-bold gradient-text">Welcome back, {{ optional(auth()->user())->name ?? 'User' }}! 👋</h1>
+        <p class="mt-2 text-lg" style="color: #00385a;">Track your learning journey and achievements</p>
     </div>
 
     <!-- Stats Cards -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <!-- Total Registrations -->
-        <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl shadow-xl p-6 text-white">
+        <div class="glass-card rounded-2xl p-6 text-white transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl" style="background: linear-gradient(135deg, #00385a 0%, #01162b 100%); box-shadow: 0 8px 32px rgba(1, 22, 43, 0.3);">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-blue-100 text-sm font-medium">My Events</p>
+                    <p class="text-sm font-medium" style="color: #d2dbcb;">My Events</p>
                     <h3 class="text-3xl font-bold mt-2">{{ $stats['total_registrations'] ?? 0 }}</h3>
                     <p class="text-blue-100 text-xs mt-2">
                         <span class="font-semibold">{{ $stats['confirmed_registrations'] }}</span> Confirmed
@@ -33,10 +33,10 @@
         </div>
 
         <!-- Certificates -->
-        <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-2xl shadow-xl p-6 text-white">
+        <div class="glass-card rounded-2xl p-6 text-white transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl" style="background: linear-gradient(135deg, #6a90b4 0%, #00385a 100%); box-shadow: 0 8px 32px rgba(1, 22, 43, 0.3);">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-green-100 text-sm font-medium">Certificates</p>
+                    <p class="text-sm font-medium" style="color: #ffffff;">Certificates</p>
                     <h3 class="text-3xl font-bold mt-2">{{ $stats['total_certificates'] }}</h3>
                     <p class="text-green-100 text-xs mt-2">
                         Earned so far
@@ -69,10 +69,10 @@
         </div>
 
         <!-- Completion Rate -->
-        <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl shadow-xl p-6 text-white">
+        <div class="glass-card rounded-2xl p-6 text-white transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl" style="background: linear-gradient(135deg, #94a2bf 0%, #6a90b4 100%); box-shadow: 0 8px 32px rgba(1, 22, 43, 0.3);">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-purple-100 text-sm font-medium">Completion Rate</p>
+                    <p class="text-sm font-medium" style="color: #ffffff;">Completion Rate</p>
                     <h3 class="text-3xl font-bold mt-2">{{ $stats['confirmed_registrations'] > 0 ? number_format(($stats['total_certificates'] / $stats['confirmed_registrations']) * 100, 0) : 0 }}%</h3>
                     <p class="text-purple-100 text-xs mt-2">
                         Great progress!
@@ -91,10 +91,10 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         <!-- My Registrations -->
-        <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm p-6">
+        <div class="lg:col-span-2 glass-card rounded-2xl p-6 transform transition-all duration-300 hover:shadow-2xl">
             <div class="flex items-center justify-between mb-6">
-                <h2 class="text-xl font-bold text-gray-900">My Events</h2>
-                <a href="{{ route('registrations.index') }}" class="text-sm text-indigo-600 hover:text-indigo-700 font-medium">View All →</a>
+                <h2 class="text-xl font-bold gradient-text">My Events</h2>
+                <a href="{{ route('registrations.index') }}" class="text-sm font-medium transition-all duration-300" style="color: #00385a;" onmouseover="this.style.color='#6a90b4'" onmouseout="this.style.color='#00385a'">View All →</a>
             </div>
 
             <div class="space-y-4">
@@ -107,7 +107,7 @@
                                     class="h-20 w-20 rounded-lg object-cover"
                                     alt="{{ optional($registration->event)->title }}">
                             @else
-                                <div class="h-20 w-20 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                                <div class="h-20 w-20 rounded-lg flex items-center justify-center" style="background: linear-gradient(to bottom right, #00385a, #6a90b4);">
                                     <svg class="h-10 w-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
@@ -205,7 +205,7 @@
                     @forelse($recommendedEvents as $event)
                         <div class="group cursor-pointer">
                             <a href="{{ route('events.show', $event->slug) }}" class="block">
-                                <div class="relative h-32 rounded-lg overflow-hidden bg-gradient-to-br from-indigo-500 to-purple-600 mb-3">
+                                <div class="relative h-32 rounded-lg overflow-hidden mb-3" style="background: linear-gradient(to bottom right, #00385a, #6a90b4);">
                                     @if(optional($event)->image)
                                         <img src="{{ asset('storage/' . optional($event)->image) }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" alt="{{ optional($event)->title ?? 'Event' }}">
                                     @endif
