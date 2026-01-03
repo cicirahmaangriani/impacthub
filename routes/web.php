@@ -58,6 +58,14 @@ Route::middleware(['auth'])->group(function () {
     // Certificate Download
     Route::get('/certificate/{registration}', [CertificateController::class, 'show'])
         ->name('certificate.show');
+    
+    Route::delete('/registrations/{registration}', 
+    [RegistrationController::class, 'destroy']
+)->name('registrations.destroy');
+Route::get('/events', [EventController::class, 'index'])
+    ->name('events.index');
+    Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');
+    
 
     // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

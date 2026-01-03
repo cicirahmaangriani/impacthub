@@ -34,7 +34,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
         'status',
     ];
 
-
+    
     protected $casts = [
         'price' => 'decimal:2',
         'gallery' => 'array',
