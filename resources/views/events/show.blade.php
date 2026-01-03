@@ -1,5 +1,5 @@
 <x-app-layout>
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" x-data="{ openModal: false }">
     
     <!-- Breadcrumb -->
     <nav class="flex mb-6" aria-label="Breadcrumb">
@@ -248,34 +248,34 @@
 
                 <!-- CTA Button -->
                 @auth
-                    @if($event->canRegister())
-                        @php
-                            $alreadyRegistered = $event->registrations()->where('user_id', auth()->id())->exists();
-                        @endphp
-                        
-                        @if($alreadyRegistered)
-                            <button disabled class="w-full py-3 px-4 bg-gray-300 text-gray-600 font-semibold rounded-lg cursor-not-allowed">
-                                ✅ Sudah Terdaftar
-                            </button>
-                        @else
-                            <form action="{{ route('events.register', ['event' => $event->slug]) }}" method="POST">
+    @php
+        // Cek langsung ke database apakah user login sudah terdaftar di event ini
+        $alreadyRegistered = $event->registrations()->where('user_id', auth()->id())->exists();
+    @endphp
 
-                                @csrf
-                                <button type="submit" class="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg transition shadow-lg hover:shadow-xl">
-                                    🎯 Daftar Sekarang
-                                </button>
-                            </form>
-                        @endif
-                    @else
-                        <button disabled class="w-full py-3 px-4 bg-red-100 text-red-600 font-semibold rounded-lg cursor-not-allowed">
-                            ❌ Pendaftaran Ditutup
-                        </button>
-                    @endif
-                @else
-                    <a href="{{ route('login') }}" class="block w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white text-center font-semibold rounded-lg transition shadow-lg hover:shadow-xl">
-                        Login untuk Mendaftar
-                    </a>
-                @endauth
+    @if($event->canRegister())
+        @if($alreadyRegistered)
+            <button disabled class="w-full py-3 px-4 bg-gray-200 text-gray-500 font-semibold rounded-lg cursor-not-allowed border border-gray-300">
+                ✅ Anda Sudah Terdaftar
+            </button>
+        @else
+            <form action="{{ route('events.register', ['event' => $event->slug]) }}" method="POST">
+                @csrf
+                <button @click="openModal = true" type="button" class="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg transition shadow-lg hover:shadow-xl">
+                    🎯 Daftar Sekarang
+                </button>
+            </form>
+        @endif
+    @else
+        <button disabled class="w-full py-3 px-4 bg-red-100 text-red-600 font-semibold rounded-lg cursor-not-allowed">
+            ❌ Pendaftaran Ditutup
+        </button>
+    @endif
+@else
+    <a href="{{ route('login') }}" class="block w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white text-center font-semibold rounded-lg transition">
+        Login untuk Mendaftar
+    </a>
+@endauth
 
                 <!-- Share -->
                 <div class="mt-6 pt-6 border-t">
@@ -293,7 +293,82 @@
                     </div>
                 </div>
             </div>
+<div x-show="openModal" 
+     class="fixed inset-0 z-50 overflow-y-auto" 
+     aria-labelledby="modal-title" role="dialog" aria-modal="true"
+     x-cloak>
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        
+        <div x-show="openModal" 
+             x-transition:enter="ease-out duration-300" 
+             x-transition:enter-start="opacity-0" 
+             x-transition:enter-end="opacity-100" 
+             x-transition:leave="ease-in duration-200" 
+             x-transition:leave-start="opacity-100" 
+             x-transition:leave-end="opacity-0" 
+             @click="openModal = false"
+             class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
 
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+        <div x-show="openModal" 
+             x-transition:enter="ease-out duration-300" 
+             x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
+             x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" 
+             x-transition:leave="ease-in duration-200" 
+             x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" 
+             x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+             class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full p-6">
+            
+            <div class="flex justify-between items-center mb-4">
+    <h3 class="text-xl font-bold text-gray-900">Formulir Pendaftaran</h3>
+    <button @click="openModal = false" type="button" class="text-gray-400 hover:text-gray-600 transition">
+        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+    </button>
+</div>
+
+            <form action="{{ route('events.register', ['event' => $event->slug]) }}" method="POST">
+                @csrf
+                <div class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">First Name</label>
+                            <input type="text" name="first_name" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Last Name</label>
+                            <input type="text" name="last_name" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        </div>
+                    </div>
+
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Phone Number</label>
+                        <input type="tel" name="phone" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Tanggal Lahir</label>
+                        <input type="date" name="birth_date" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Address</label>
+                        <textarea name="address" rows="3" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"></textarea>
+                    </div>
+                </div>
+                
+                <div class="mt-6">
+                    <button type="submit" class="w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-3 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm">
+                        Konfirmasi Pendaftaran
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
         </div>
     </div>
 
