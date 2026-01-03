@@ -6,13 +6,14 @@
                 <p class="text-sm text-gray-500">
                     Organizer:
                     <span class="font-medium text-gray-800">
-                        {{ $event->organizer->name ?? $event->user->name ?? '-' }}
+                        {{ optional($event->organizer ?? $event->user)->name ?? '-' }}
                     </span>
                 </p>
             </div>
 
             <div class="flex items-center gap-2">
-                <a href="{{ route('admin.events.index') }}" class="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-50">
+                <a href="{{ route('admin.events.index') }}"
+                   class="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-50">
                     ← Kembali
                 </a>
             </div>
@@ -28,10 +29,9 @@
                         <div>
                             <div class="text-gray-500">Tanggal</div>
                             <div class="font-medium text-gray-900">
-                              {{ $event->start_date ? \Carbon\Carbon::parse($event->start_date)->format('d M Y H:i') : '-' }}
-                              —
-                              {{ $event->end_date ? \Carbon\Carbon::parse($event->end_date)->format('d M Y H:i') : '-' }}
-
+                                {{ optional($event->start_date)->format('d M Y H:i') ?? '-' }}
+                                —
+                                {{ optional($event->end_date)->format('d M Y H:i') ?? '-' }}
                             </div>
                         </div>
 
@@ -44,7 +44,8 @@
                             <div class="text-gray-500">Kuota</div>
                             <div class="font-medium text-gray-900">
                                 @php
-                                    $registered = $event->registrations->count() ?? 0;
+                                    // kalau controller pakai withCount('registrations') akan ada registrations_count
+                                    $registered = $event->registrations_count ?? ($event->registrations?->count() ?? 0);
                                     $quota = $event->quota ?? '-';
                                 @endphp
                                 {{ $registered }}/{{ $quota }}
@@ -54,10 +55,7 @@
                         <div>
                             <div class="text-gray-500">Harga</div>
                             <div class="font-medium text-gray-900">
-                                @php
-                                    $price = $event->price ?? 0;
-                                @endphp
-                                Rp {{ number_format($price, 0, ',', '.') }}
+                                Rp {{ number_format($event->price ?? 0, 0, ',', '.') }}
                             </div>
                         </div>
 
@@ -106,7 +104,7 @@
                                             </span>
                                         </td>
                                         <td class="px-3 py-2 text-gray-700">
-                                            {{ $reg->created_at ? $reg->created_at->format('d M Y H:i') : '-' }}
+                                            {{ optional($reg->created_at)->format('d M Y H:i') ?? '-' }}
                                         </td>
                                     </tr>
                                 @empty
@@ -127,10 +125,8 @@
                 <div class="bg-white rounded-2xl shadow-sm p-6">
                     <h2 class="text-lg font-bold text-gray-900 mb-4">Aksi Cepat</h2>
 
-                    <a
-                        href="{{ route('events.show', $event->slug) }}"
-                        class="block w-full text-center rounded-lg border border-gray-300 px-4 py-2 hover:bg-gray-50"
-                    >
+                    <a href="{{ route('events.show', $event) }}"
+                       class="block w-full text-center rounded-lg border border-gray-300 px-4 py-2 hover:bg-gray-50">
                         Lihat Halaman Public
                     </a>
 
@@ -139,7 +135,8 @@
                             <form method="POST" action="{{ route('admin.events.approve', $event->id) }}">
                                 @csrf
                                 @method('PATCH')
-                                <button class="w-full rounded-lg bg-green-600 text-white px-4 py-2 hover:bg-green-700">
+                                <button type="submit"
+                                        class="w-full rounded-lg bg-green-600 text-white px-4 py-2 hover:bg-green-700">
                                     Approve (Publish)
                                 </button>
                             </form>
@@ -147,7 +144,8 @@
                             <form method="POST" action="{{ route('admin.events.reject', $event->id) }}">
                                 @csrf
                                 @method('PATCH')
-                                <button class="w-full rounded-lg bg-red-600 text-white px-4 py-2 hover:bg-red-700">
+                                <button type="submit"
+                                        class="w-full rounded-lg bg-red-600 text-white px-4 py-2 hover:bg-red-700">
                                     Reject
                                 </button>
                             </form>
@@ -158,8 +156,9 @@
                 <div class="bg-white rounded-2xl shadow-sm p-6">
                     <h2 class="text-lg font-bold text-gray-900 mb-4">Info</h2>
                     <p class="text-sm text-gray-600">
-                        Jika peserta mendaftar, datanya akan otomatis muncul di tabel Registrations selama controller melakukan
-                        <code class="px-1 py-0.5 bg-gray-100 rounded">registrations.user</code>.
+                        Pastikan controller load relasi
+                        <code class="px-1 py-0.5 bg-gray-100 rounded">registrations.user</code>
+                        agar tabel peserta tampil tanpa N+1 query.
                     </p>
                 </div>
             </div>

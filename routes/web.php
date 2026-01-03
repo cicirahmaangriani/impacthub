@@ -13,6 +13,10 @@ use App\Http\Controllers\Admin\ParticipantController;
 use App\Http\Controllers\Admin\EventVerificationController;
 use App\Http\Controllers\Admin\AdminEventController;
 
+// Quick actions admin
+use App\Http\Controllers\Admin\AdminReportController;
+use App\Http\Controllers\Admin\AdminSettingController;
+
 /*
 |--------------------------------------------------------------------------
 | Public Routes
@@ -38,25 +42,38 @@ Route::middleware(['auth'])->group(function () {
     | ADMIN ONLY
     |--------------------------------------------------------------------------
     */
-    Route::prefix('admin')
-        ->name('admin.')
-        ->middleware(['can:isAdmin'])
-        ->group(function () {
+  Route::prefix('admin')
+    ->name('admin.')
+    ->middleware(['auth', 'can:isAdmin'])
+    ->group(function () {
 
-            Route::get('/dashboard', [DashboardController::class, 'admin'])->name('dashboard');
+        Route::get('/dashboard', [DashboardController::class, 'admin'])->name('dashboard');
 
-            // Monitoring Event (Admin)
-            Route::get('/events', [AdminEventController::class, 'index'])->name('events.index');
-            Route::get('/events/{event}', [AdminEventController::class, 'show'])->name('events.show');
+        // ✅ Admin Create Event
+        Route::get('/events/create', [AdminEventController::class, 'create'])->name('events.create');
+        Route::post('/events', [AdminEventController::class, 'store'])->name('events.store');
 
-            // Verifikasi Event (Admin)
-            Route::patch('/events/{event}/approve', [EventVerificationController::class, 'approve'])->name('events.approve');
-            Route::patch('/events/{event}/reject', [EventVerificationController::class, 'reject'])->name('events.reject');
+        // ✅ Monitoring Event (Admin)
+        Route::get('/events', [AdminEventController::class, 'index'])->name('events.index');
+        Route::get('/events/{event:id}', [AdminEventController::class, 'show'])->name('events.show');
 
-            // Monitoring Peserta (Admin)
-            Route::get('/participants', [ParticipantController::class, 'index'])->name('participants.index');
-            Route::get('/participants/{user}/registrations', [ParticipantController::class, 'registrations'])->name('participants.registrations');
-        });
+        // ✅ Verifikasi Event (Admin) - dipakai di show.blade.php
+        Route::patch('/events/{event:id}/approve', [EventVerificationController::class, 'approve'])->name('events.approve');
+        Route::patch('/events/{event:id}/reject', [EventVerificationController::class, 'reject'])->name('events.reject');
+
+        // ✅ Manage Users (pakai participants yang sudah ada)
+        Route::get('/manage-users', [ParticipantController::class, 'index'])->name('manage-users.index');
+
+        // ✅ Reports + Settings (controller kamu)
+        Route::get('/reports', [\App\Http\Controllers\Admin\ReportController::class, 'index'])->name('reports.index');
+        Route::get('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');
+
+    // Quick Actions pages
+    Route::get('/manage-users', [\App\Http\Controllers\Admin\ManageUserController::class, 'index'])->name('manage-users.index');
+    Route::get('/reports', [\App\Http\Controllers\Admin\ReportController::class, 'index'])->name('reports.index');
+    Route::get('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');
+});
+
 
     /*
     |--------------------------------------------------------------------------

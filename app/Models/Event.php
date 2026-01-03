@@ -27,7 +27,7 @@ class Event extends Model
         'venue_type',
         'image',
         'gallery',
-        'status', // draft | published (atau sesuai sistem kamu)
+        'status', // draft | published
         'start_date',
         'end_date',
         'registration_deadline',
@@ -49,9 +49,20 @@ class Event extends Model
         'is_featured' => 'boolean',
         'certificate_available' => 'boolean',
 
-        // kalau kolom gallery kamu JSON, ini bikin langsung jadi array
+        // kalau gallery JSON (dan bisa null), amanin jadi array kosong
         'gallery' => 'array',
     ];
+
+    /**
+     * Kalau kamu sering pakai route model binding by slug di public routes:
+     * Route::get('/events/{event:slug}', ...)
+     * Ini bikin default binding pakai slug kalau route pakai {event}
+     * (opsional, tapi recommended untuk konsisten)
+     */
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
 
     /**
      * Organizer / pembuat event
@@ -62,8 +73,7 @@ class Event extends Model
     }
 
     /**
-     * Alias (biar kalau di kode lama masih pakai $event->user tidak error)
-     * Ini opsional, tapi aman kalau kamu sudah terlanjur pakai user() di banyak tempat.
+     * Alias biar kode lama $event->user masih jalan
      */
     public function user(): BelongsTo
     {
@@ -71,7 +81,23 @@ class Event extends Model
     }
 
     /**
-     * Registrations / pendaftar event
+     * Category relasi (sesuaikan model Category kamu)
+     */
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class, 'category_id');
+    }
+
+    /**
+     * Event Type relasi (sesuaikan model EventType kamu)
+     */
+    public function eventType(): BelongsTo
+    {
+        return $this->belongsTo(EventType::class, 'event_type_id');
+    }
+
+    /**
+     * Registrations / pendaftar
      */
     public function registrations(): HasMany
     {
@@ -79,7 +105,7 @@ class Event extends Model
     }
 
     /**
-     * Scope: event yang published
+     * Scope: published events
      */
     public function scopePublished($query)
     {
