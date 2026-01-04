@@ -34,6 +34,7 @@ class Event extends Model
         'points_reward', 
         'objectives',
         'image',
+        'gallery',
         'status',
     ];
 
@@ -51,6 +52,17 @@ class Event extends Model
     ];
 
     /**
+     * Kalau kamu sering pakai route model binding by slug di public routes:
+     * Route::get('/events/{event:slug}', ...)
+     * Ini bikin default binding pakai slug kalau route pakai {event}
+     * (opsional, tapi recommended untuk konsisten)
+     */
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+
+    /**
      * Organizer / pembuat event
      */
     public function organizer(): BelongsTo
@@ -59,8 +71,7 @@ class Event extends Model
     }
 
     /**
-     * Alias (biar kalau di kode lama masih pakai $event->user tidak error)
-     * Ini opsional, tapi aman kalau kamu sudah terlanjur pakai user() di banyak tempat.
+     * Alias biar kode lama $event->user masih jalan
      */
     public function user(): BelongsTo
     {
@@ -68,27 +79,27 @@ class Event extends Model
     }
 
     /**
-     * Registrations / pendaftar event
+     * Category relasi (sesuaikan model Category kamu)
+     */
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class, 'category_id');
+    }
+
+    /**
+     * Event Type relasi (sesuaikan model EventType kamu)
+     */
+    public function eventType(): BelongsTo
+    {
+        return $this->belongsTo(EventType::class, 'event_type_id');
+    }
+
+    /**
+     * Registrations / pendaftar
      */
     public function registrations(): HasMany
     {
         return $this->hasMany(Registration::class, 'event_id');
-    }
-
-    /**
-     * Category relationship
-     */
-    public function category(): BelongsTo
-    {
-        return $this->belongsTo(Category::class);
-    }
-
-    /**
-     * Event Type relationship
-     */
-    public function eventType(): BelongsTo
-    {
-        return $this->belongsTo(EventType::class);
     }
 
     /**
@@ -116,7 +127,7 @@ class Event extends Model
     }
 
     /**
-     * Scope: event yang published
+     * Scope: published events
      */
     public function scopePublished($query)
     {

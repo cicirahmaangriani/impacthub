@@ -56,19 +56,19 @@
 </head>
 
 <body class="font-sans antialiased">
-    <div class="min-h-screen" style="background: linear-gradient(135deg, #f5f7f2 0%, #e8ede3 25%, #d2dbcb 50%, #c5d0bf 100%);">
+    <div class="min-h-screen bg-ocean-50">
         @include('layouts.navigation')
 
         {{-- Header: support slot & section --}}
         @if (isset($header))
-            <header class="shadow-lg" style="background: rgba(0, 56, 90, 0.98); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(106, 144, 180, 0.2); position: relative; z-index: 100;">
-                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 text-white">
+            <header class="bg-white/80 backdrop-blur shadow border-b border-ocean-100">
+                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                     {{ $header }}
                 </div>
             </header>
         @elseif (View::hasSection('header'))
-            <header class="shadow-lg" style="background: rgba(0, 56, 90, 0.98); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(106, 144, 180, 0.2); position: relative; z-index: 100;">
-                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 text-white">
+            <header class="bg-white/80 backdrop-blur shadow border-b border-ocean-100">
+                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                     @yield('header')
                 </div>
             </header>
