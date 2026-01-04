@@ -105,12 +105,27 @@
                                 </td>
 
                                 <td class="px-4 py-3">
-                                    <a
-                                        href="{{ route('admin.events.show', $event->slug) }}"
-                                        class="inline-flex items-center px-3 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700"
-                                    >
-                                        Detail
-                                    </a>
+                                    <div class="flex items-center gap-2">
+                                        <a
+                                            href="{{ route('admin.events.show', $event->id) }}"
+                                            class="inline-flex items-center px-3 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700"
+                                        >
+                                            Detail
+                                        </a>
+                                        <a
+                                            href="{{ route('admin.events.edit', $event->id) }}"
+                                            class="inline-flex items-center px-3 py-2 rounded-lg bg-amber-600 text-white hover:bg-amber-700"
+                                        >
+                                            Edit
+                                        </a>
+                                        <form action="{{ route('admin.events.destroy', $event->id) }}" method="POST" onsubmit="return confirm('Yakin hapus event ini?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="inline-flex items-center px-3 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700">
+                                                Hapus
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         @empty

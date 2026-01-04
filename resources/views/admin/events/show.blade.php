@@ -12,6 +12,17 @@
             </div>
 
             <div class="flex items-center gap-2">
+                <a href="{{ route('admin.events.edit', $event->id) }}"
+                   class="px-4 py-2 rounded-lg bg-amber-600 text-white hover:bg-amber-700">
+                    Edit Event
+                </a>
+                <form action="{{ route('admin.events.destroy', $event->id) }}" method="POST" onsubmit="return confirm('Yakin hapus event ini?')" class="inline">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700">
+                        Hapus Event
+                    </button>
+                </form>
                 <a href="{{ route('admin.events.index') }}"
                    class="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-50">
                     ← Kembali

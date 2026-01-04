@@ -1,10 +1,10 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-900 leading-tight">
-            Buat Event Baru (Admin)
+            Edit Event: {{ $event->title }}
         </h2>
         <p class="text-gray-600 mt-2">
-            Kelola dan buat event sebagai administrator
+            Update informasi event sebagai administrator
         </p>
     </x-slot>
 
@@ -31,8 +31,9 @@
                 </div>
             @endif
 
-            <form action="{{ route('admin.events.store') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('admin.events.update', $event->id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
+                @method('PUT')
                 @include('events._form')
             </form>
 

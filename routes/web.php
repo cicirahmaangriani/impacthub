@@ -72,22 +72,24 @@ Route::middleware(['auth'])->group(function () {
         // ✅ Monitoring Event (Admin)
         Route::get('/events', [AdminEventController::class, 'index'])->name('events.index');
         Route::get('/events/{event:id}', [AdminEventController::class, 'show'])->name('events.show');
+        Route::get('/events/{event:id}/edit', [AdminEventController::class, 'edit'])->name('events.edit');
+        Route::put('/events/{event:id}', [AdminEventController::class, 'update'])->name('events.update');
+        Route::delete('/events/{event:id}', [AdminEventController::class, 'destroy'])->name('events.destroy');
 
         // ✅ Verifikasi Event (Admin) - dipakai di show.blade.php
         Route::patch('/events/{event:id}/approve', [EventVerificationController::class, 'approve'])->name('events.approve');
         Route::patch('/events/{event:id}/reject', [EventVerificationController::class, 'reject'])->name('events.reject');
 
-        // ✅ Manage Users (pakai participants yang sudah ada)
-        Route::get('/manage-users', [ParticipantController::class, 'index'])->name('manage-users.index');
+        // ✅ Manage Users
+        Route::get('/manage-users', [\App\Http\Controllers\Admin\ManageUserController::class, 'index'])->name('manage-users.index');
+        Route::patch('/manage-users/{user}/role', [\App\Http\Controllers\Admin\ManageUserController::class, 'updateRole'])->name('manage-users.update-role');
+        Route::delete('/manage-users/{user}', [\App\Http\Controllers\Admin\ManageUserController::class, 'destroy'])->name('manage-users.destroy');
 
         // ✅ Reports + Settings (controller kamu)
         Route::get('/reports', [\App\Http\Controllers\Admin\ReportController::class, 'index'])->name('reports.index');
         Route::get('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');
-
-    // Quick Actions pages
-    Route::get('/manage-users', [\App\Http\Controllers\Admin\ManageUserController::class, 'index'])->name('manage-users.index');
-    Route::get('/reports', [\App\Http\Controllers\Admin\ReportController::class, 'index'])->name('reports.index');
-    Route::get('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');
+        Route::post('/settings/clear-cache', [\App\Http\Controllers\Admin\SettingController::class, 'clearCache'])->name('settings.clear-cache');
+        Route::post('/settings/optimize', [\App\Http\Controllers\Admin\SettingController::class, 'optimizeApp'])->name('settings.optimize');
 });
 
 
